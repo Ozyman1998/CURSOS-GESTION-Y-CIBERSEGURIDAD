@@ -1,0 +1,2507 @@
+---
+title: "CURSO ADMINISTRACIÓN Y GESTIÓN LINUX"
+author: "Nacho Delgado"
+date: "07.11.2026"
+format: 
+  html:
+    embed-resources: True
+    toc: True
+    toc-location: left
+    toc-depth: 3
+    toc-title: "Indice"
+    toc-expand: True
+    number-sections: True
+    smooth-scroll: True
+    code-tools: True
+    anchor-sections: True
+    code-copy: True
+    code-line-numbers: True
+    code-overflow: scroll
+    highlight-style: github
+    code-block-bg: True
+    code-block-border-left: "#31BAE9"
+execute: 
+  eval: false
+mermaid:
+  theme: forest
+engine: knitr
+editor: visual
+---
+
+## LINUX
+
+Linux es una familia de Sistemas operativos (SO) creado desde UNIX y MINIX en Finlandia en 1990
+
+- **UNIX**: sistema operativo que requería licencia. Desde Unix nacen tanto linux como windows, como Minix y después Linux
+
+- **MINIX**: Version de UNIX más pequeña para uso educativo. Requeria dos licencias
+
+Linus Thorvalds desarrolla Linux para que funcione de forma más óptima que Minix. Simplemente creó un Kernel para microporcesador y un driver para disco duro que luego puso a disposición libre bajo una licencia GPL (General Public Liscence). Tiempo después Richard Stallmann desarrolla el primer driver libre para conectarse a una impresora de la marca Xerox, iniciando el camino del software libre.
+
+- **Licencia GPL**: licencias que no requieren pago pero si reconocimeinto. Además todo lo que se desarrolle a partir de las mismas debe estar a libre disposición.
+
+## Versiones de Linux
+
+- **LTS (Long time Support)** Son versiones con actualizaciones y soporte asegurados y gratis por 5 años. Suelen ser versiones acabadas en .04 (Ubuntu 20.04,22.04,24.04, 26.04...)
+
+- **Versiones .10** Son versiones con solo 9 meses de soporte y actualizaciones. Suelen ser versiones de pruebas o en testeo (Ubuntu 20.10, 22.10,24.10,26.10...)
+
+- **Distribuciones Rolling Release** Son distribuciones de SO en continuo desarrollo. Son actualizadas por la comunidad de forma continua. Si algo no funciona debes arreglarlo tu mismo. (Kali linux, Parrot OS, Arch linux, manjaro, openSUSE, Endeavour OS, Cachy OS,...)
+
+- **Net install** Son versiones de SO más pequeñas que requieren de forma obligatoria conexión a internet durante la instalación para descargar paquetes faltantes.
+
+- **Legacy** Son versiones para máquinas antiguas que no aceptan drivers más modernos (AntiX Linux, MX linux, Puppy linux, Lubuntu, Linux Lite,
+
+## VIRTUALIZACIONES
+
+Para virtualizar antes se tiene que tener en cuenta lo siguiente:
+
+- **RAM del anfitrión**: Limite el número de máquinas que se pueden virtualizar. Nunca se debe pasar de la mitad de la RAM del anfitrión en el total de máquinas virtualizadas. Una vez se apaga una VM, esta le devuleve la RAM al anfitrión.
+
+- Windows XP \~ 1 GB RAM
+
+- Debian 12 \~ 4 GB RAM
+
+- Ubuntu 26 \~ 6 GB RAM
+
+- **Disco Duro**: Virtual Box reserva espacio en el disco del anfitrión para las VM. Esto quita espacio "para siempre" del disco del anfitrión (hasta que se elimina la VM) aunque la VM no este en uso.
+
+  - *Asignación dinámica de disco*: El anfitrión comparte disco con las VM de forma extendida, sin restricciones. Ambos, el anfitrión como las VM pueden escribir cualquier parte del disco. Es problemático, si cualquier SO escribe la totalidad del disco, puede dejar el SO anfitrión a 0 y que no arranque.
+  - *Asignación fija de disco*: el anfitrión asigna un espacio fijo para el archivo .vdi de la VM, en el que no puede escribir. El anfitrión se queda con un disco más pequeño.
+
+- **Virtualizador** Es el software que realiza la virtualización
+
+- *VMware* : Solo permite 2 VM sin licencia. Después exige una licencia de pago por cada nueva VM.
+
+- *Proxmox* : Es un anfitrión, un SO, exclusivo para virtualizar otros SO o para virtualizar servidores de empresa.
+
+- *Virtua Box:* Gratis. Es de Oracle.
+
+  - *Virtual Box 7* : Requiere actualizar la máquina virtual de java. Si el Windows es pirata o no actualizado, da muchos problemas
+  - *Virtual Box 6.1* : No requiere máquina virtual de java
+
+### Instalar Virtual Box
+
+1.  Descargar el .exe de virtual box de la web
+
+2.  Al instalar Virtual Box en windows, pide permisos para hacer cambios en el sistema. Esto crea 2 nuevos adaptadores de red. Sin ellos no se puede actualizar ni comunicar con la VM. En register file associations, decir siempre que si para recuperar VM antiguas.
+
+3.  Al terminar la instalación se crea el **Virtual box Host-only Ethernet adapter**. Si no lo crea, virtual box no funcionará. Para comprobarlo, ir a Administrador de dispositivos.
+
+4.  Reinicir el anfitrión. En el CMD hacer
+
+```{bash}
+shutdown -t:00 -r
+```
+
+-t:00 es el tiempo en segundos hasta apagar, -r significa reiniciar (reboot). -s apagar (shutdown)
+
+-t se salta por completo la hibernación de windows y apaga por completo la máquina. Windows nunca se apaga por completo, sino que se mantiene en hibernación para arrancar más rápido.
+
+### Descargar e Instalar SO en Virtual Box
+
+1.  Descargar la ISO
+2.  En virtual Box crear una máquina virtual nueva
+    - Nombre: nombre de la VM
+
+    - Carpeta de máquina: Dónde en el anfitrión se guarda la VM
+
+    - Tipo: Linux, windows, solaris...
+
+    - Version: 64 o 32 bits\* Muchas veces no deja virtualizar máquinas de 64 bits. En ese caso hay que entrar en la BIOS y cambiar el hipervirtualizador (Advanced - CPU setup- Intel R virtualization technology - Enable)
+3.  Memoria a 4096 MB (4GB)
+4.  Disco duro
+    - Crear disco duro virtual ahora
+
+    - Tipo: .vdi
+
+      - vdi (Virtual disk image) - Compatible con todos las versiones de Virtual Box
+
+      - vhd (Virtual hard disk)
+
+      - vmdk (Virtual machine disk) - Compatible con MAC y otros virtualizadores
+
+    - Tipo de almacenamiento: **FIJO de 40 GB - CREAR**
+
+      - NUNCA PARAR EL PROCESO MIENTRAS CREA EL DISCO. PUEDES ROMPER EL ANFITRIÓN Y QUE NO SEPA ASIGNAR ESPACIO
+5.  Configuar el Hardware
+    - Quitar la opción de arranque desde disquete
+
+    - Pocesador: Aumentar el número de CPUs a 2
+
+    - RED: Cambiar el adaptador de Red de NAT a Bridge
+
+      - NAT: El anfitrión y las VM no se ven. Puede dar problemas
+
+      - Bridge: El anfitrión y las VM se ven e intercambian info
+
+    - Almacenamiento: Controlador IDE. Al inicio está vacío. Clicar en la imágne de un cd rom pequeño azúl. Dejará seleccionar la ISO que quieres instalar.
+6.  Iniciar la VM
+    - Iniciará el SO pero no estará instalado. Se puede probar sin instalar
+
+    - Para instalarlo clickar en el installer del escritorio
+
+      - Cambiar ubicación, teclado...
+
+      - Particiones - Borrar disco. Esto genera normalmente un sistema de particiones poco eficiente del tipo:
+
+        \| PARTICIÓN PRIMARIA \| PARTICIÓN SWAP \|
+
+        Es mejor
+
+        \| PARTICIÓN SWAP \| PARTICIÓN PRIMARIA \|
+
+        Si alguna vez se tiene que incrementar el tamaño de disco de la opción 1, hay que mover antes la Swap. En la 2 no.
+
+      - Usuario, login....
+
+## ACTUALIZACIÓN DE MÁQUINAS LINUX
+
+1.  Activar/despertar al Root (administrador):
+
+    ```{bash}
+    usuarioxx@maquinaxx$sudo passwd root
+    ```
+
+    Este comando pide primero a contraseña root y luego la cambia
+
+    - **sudo**: comando especial que solo pueden usar los usuarios del grupo Superusers (administradores)
+
+    - **\$** Significa usuario estándar, sin privilegios de adminsitrador
+
+    - **passwd user**: Cambia la contraseña del usuario deseado
+
+2.  Comprobar si el root está activo/Hacerse root.
+
+    ```{bash}
+    $su - root # funciona en todos los SO 
+    $su - 
+    ```
+
+    Te comvierte en root
+
+    - Despueés en vez de **\$** aparece **\#** (*usuarioxx\@maquinaxx:\~#*)
+
+    - **\#** Significa Administrador o root
+
+    - **logout** o **exit** Comandos para salir de root
+
+3.  Actualizar el sistema: antes de empezar comprobar que hay internet haciendo
+
+    ```{bash}
+    $ping -c4 -w2 8.8.8.8 
+    $ping -c4 192.168.1.1
+    ```
+
+    - **-c4** envia 4 paquetes
+
+    - **-w2** Espera por 2 segundos a recibir respuesta
+
+    - **8.8.8.8** DNS primario
+
+    - **192.168.1.1** Dirección IP del router. Se podría usar cualquier otra IP conocida de internet
+
+      ```{bash}
+      $sudo apt-get update # comando antiguo de linux 
+      $sudo apt update # comando más moderno de linux
+      $sudo pacman -Syy # esto es arch linux 
+      ```
+
+      esto actualiza los repositorios de aplicaciones y programas
+
+      ```{bash}
+      $sudo apt-get upgrade 
+      $sudo apt upgrade 
+      $sudo pacman -Syu # arch linux
+      ```
+
+      esto instala las actualizaciones de aplicaciones
+
+      ```{bash}
+      $sudo apt-get dist-upgrade
+      ```
+
+      Esto actualiza la distribución del SO y del Kernel
+
+4.  Limpiar el SO y eliminar paquetes obsoletos
+
+    ```{bash}
+    $sudo apt-get autoremove # limpieza de paquetería absoluta
+    $sudo apt-get autoclean # Limpieza de paquetería 
+    $sudo pacman -Rns # arch linux
+    ```
+
+5.  Otros comandos útiles
+
+    ```{bash}
+    $history # Da una lista de los 10.000 comandos anteriores corridos en terminal 
+    $lsb_release -a # Da la versión del SO 
+    $clean #limpia la pantalla del terminal
+    ```
+
+## PARTICIONES Y FORMATOS DE LINUX
+
+- **BIOS (Basic Input Output system)**: Dentro de la placa madre, es a grandes rasgos aquello que identifica y permite el arranque del ordenador. Identifica también el microprocesador, los discos y la memoria RAM
+
+- Tipos de discos actuales
+
+  - PATA (Parallel advanced technology attachment)
+
+    - Estandar antiguo que envía varios bits de forma simultánea (hasta 133 MB/s)
+
+  - SATA (Serial advanced technology attachment)
+
+    - Estandar actual que envía bits 1 a 1 de forma serial y mucho más rápida (hasta 600 MB/s en SATA III)
+
+  - M2NVME (Non-Volatile memory express)
+
+    - Alto rendimiento para memorias flash modernas (hasta 7.000 MB/s)
+
+    - Diseñado para consumir menos energía
+
+### Tablas de particiones
+
+Las particiones se definen mediante estructuras de datos escritas en partes del disco duro entre ellas
+
+- **MBR (Master boot record)**
+
+  - Solo permite hasta 4 particiones primarias que son particiones que permiten el arranque del SO. Se pueden tener hasta 4 SO.
+
+  - Solo 1 partición extendida como máximo opcional
+
+    - No se pueden guardar archivos hasta que se divide en unidades lógicas
+
+    - Apenas se usa actualmente
+
+  - Particiones/unidades lógicas: Todas las que se deseen. Son las particiones en las que se divide la partición extendida.
+
+  - Si el sistema no encuentra la partición primaria o si esta se corrompe, toda la información de la partición extendida se pierde
+
+  - Da problemas con particiones mayores a 2TB
+
+- **GPT (Guid partition table)**
+
+  - Permite hasta 128 particiones
+
+  - No necesita crear particiones logicas o extendidas
+
+  - Permite trabajar con discos superiores a 2 TB en una sola partición
+
+  - Sistema legacy MBR: Totalmente compatible con placas y SO que soportan solo MBR
+
+### Nomenclatura de discos y particiones
+
+- **/DEV/HDA** Disco 1 IDE/ATAPI
+
+- **/DEV/HDB** Disco 2 IDE/ATAPI
+
+- **/DEV/SDA** Disco 1 SCSI o SATA
+
+- **/DEV/SDB** Disco 2 SCSI o SATA
+
+- **/DEV/HDA1** Partición 1 en disco IDE
+
+- **/DEV/SDA1** PArtición 1 en disco SATA
+
+- **/DEV/FD0** Unidad de disquete ordinario
+
+- **/DEV/RAM** Disco RAM
+
+- **/DEV/NVME0N1** Disco 1 NVME
+
+- **/DEV/NVME0N2** Disco 2 NVME
+
+- **/DEV/NVME0P1** Partición 1 en disco NMVE
+
+### Formatos en Linux
+
+- **NTFS (New Technology File System)**: Formato propietario de Microsoft
+
+  - Estándar para Windows
+
+  - Creado para romper el límite de 4.3 GB de formatos FAT
+
+  - Linux de serie soporta normalmente todos los formatos pero a veces hay que instalar el soporte
+
+    ```{bash}
+    $sudo apt-get install NTFS-3G 
+    ```
+
+    El soporte modifica el kernel linux
+
+- **FAT12/16/32 (File allocation table)**
+
+  - el formato más antiguo es FAT12
+
+  - FAT32 Es compatible con absolutamente todos los SO del mundo
+
+  - No soportan archivos mayores a 4.3 GB
+
+- **ExFAT**: Diseñado para superar la barera de los 4.3 GB de FAT.
+
+  - Mejora el rendimiento de la asignación de espacio libre. Los clústers de información en ExFAT son más pequeños que en FAT
+
+  - Soporte para más de 1000 ficheros en un directorio
+
+  - No implementa Journaling
+
+- **EXT2 (Second extended file system)**
+
+  - Diseñado para Linux
+
+  - Fue muy usado hasta ser remplazado por EXT3
+
+- **EXT3 (Third extended file system)**
+
+  - Incluye Jounaling
+
+  - Muy empleado en Linux aunque se está sustituyendo por EXT4
+
+- **EXT4 (Fourth extended file system)**
+
+  - No necesita tanta CPU como EXT3
+
+  - Mejora en la velocidad de lectura y escritura del disco
+
+  - Actualmente es muy usado aunque sigue en pruebas en muchas distribuciones Linux
+
+  - La recuperación de archivos no es tan buena como en EXT3
+
+- **ReisenFS**
+
+  - Incluye journaling
+
+  - Permite redimensionar particiones "en caliente" durante uso y sin desmontarlas
+
+  - Es bueno para discos mecánicos pero no para discos sólidos
+
+- **ZFS** Sistema de archivos más moderno con capacidades más avanzadas como recuperación de errores, mayor capacidad de soporte para ficheros grandes.
+
+  - En Linux está en pruebas todavía y sin estandar oficial
+
+- **LMV (Logical Volume Management)**
+
+  - Se debe reservar una o más particiones y asignarles códigos (escribirlo todo en una libreta). Tras ello se aplican utulidades PUCREATE, VGCREATE, LVCREATE y LVSCAN pata administrar las particiones
+
+  - Se usa a nivel de server en un CPD NUNCA EN UN CLIENTE
+
+  - Si un disco LVM se rompe, se pierde toda la información contenida en el caso de usar varios discos.
+
+  - Administrar LVM es altamente complejo
+
+  - Permite redimensionar facilmente volúmenes lógicos sin preocuparse del tamaño de particiones y su posición. Por ejemplo permite añadir un disco nuevo y fusionarlo, de tal forma que el sustema vea solo un disco cuando en realidad fisicamente hay varios
+
+  - Complica altamente la recuperación ante desastres
+
+[Journaling]{style="color: red;"} - Es un registro que permite restablecer datos afectados del sistema por una "transacción" (archivo en uso o modificación) durante un fallo del sistema. Por ejemplo, cuando se va la luz, desconectándose el PC, y arrancándolo de nuevo después, el sistema tarda más en arrancar. Además aparece un "Verificando..." eso es el journaling comprobando el disco.
+
+Cuando se crea un archivo en el Kernel se crea un INODO asociado que permite su recuperación. El Journaling permite recuperar el INODO del archivo.
+
+## SISTMA RAID
+
+- **RAID 0**: Dos o más discos unidos/fusionados en un solo volumen
+
+  - Si uno de los discos falla, se pierde todo
+
+- **RAID 1 o Mirroring**: Solo con dos discos
+
+  - Uno de los discos copia de forma continua al otro, de tal forma que se tiene una copia de seguridad continua
+
+- **RAID 5** Necesita obligatoriamente 3 discos como minimo
+
+  - Se pierde el tamaño de un disco en bandas de paridad distribuidas
+
+  - Permite que aunque falle 1 disco, todo funcione sin problemas. Si fallan 2 discos se pierde todo
+
+  - Además permite cambiar discos y los nuevos se particionan de forma automática
+
+| Disco 1 | Disco 2 | Disco 4 |
+|---------|---------|---------|
+| xxx     | aaa     | bbb     |
+| aaa     | xxx     | aaa     |
+| bbb     | bbb     | xxx     |
+
+**xxx** Bandas de paridad
+
+aaa y bbb - información
+
+Al cambiar un disco pequeño por otro más grande, las particiones se crean automáticamente. Primero los discos originales crean las bandas de paridad en el nuevo y luego las de información. El espacio sobrante en el nuevo disco está sin particionar. NO SE PUEDE NI SE DEBE USAR.
+
+En bancos y CPD se usan normalmente RAID 5 sobre RAIDs 1
+
+## CREAR UN USB BOOTEABLE CON VENTOY
+
+1.  Descargar el exe/deb de ventoy e instalarlo
+2.  En un USB de 16 GB al menos. Lanzar ventoy y formatearlo
+3.  Copiar ISOs de SO, clonecilla, gparted live... y pegarlas en el USB ventoy
+
+## CLONAR DISCOS DUROS CON CLONECILLA
+
+1.  Apagar el PC y conectar un nuevo disco. Ninguno de los discos puede estar dañado
+2.  Conectar un USB booteable con Clonecilla, entrar en la BIOS y arrancar desde el USB
+3.  Seleccionar clonecilla. Arranca y aparece el menú de clonecilla
+4.  Seleccionar lenguaje
+5.  Mantener distribución de teclado - Aceptar
+6.  Empezar clonecilla
+7.  Seleccinar Device-Device, elegir el disco duro origen y destino
+8.  Decirle que copie también el boot de arranque para tener una imágen completa
+9.  Apagar la máquina, quitar el disco duro origen y el USB, y arrancar
+
+Clonecilla copia bit a bit asi que lo copia absolutamente todo y da igual el dispositivo de almacenamiento o sus particiones
+
+Se puede clonar de un disco menor a uno mayor sin problemas, y de uno mayor a uno menor pero con pasos intermedios.
+
+Clonecila puede Clonar tarjetas SIM
+
+## CREACIÓN DE USUARIOS EN LINUX
+
+1.  Hacerse root
+
+    ```{bash}
+    $su - root
+    ```
+
+2.  Como root crear los usuarios
+
+    ```{bash}
+    #adduser nombre_usr
+    ```
+
+    Pide solo contraseña y nombre de login (nombre_usr) de forma imprescindible. Pide también datos que no son necesarios (nombre completo, dirección, telefono...) que se pueden dejar en blanco
+
+Al crear un usuario se edita un archivo de configuración en **/etc/shadow** que puede ser editado
+
+```{bash}
+$sudo nano /etc/shadow
+```
+
+los campos son los siguientes:
+
+```{bash}
+login:password:fecha ultimo cambio password:edad min password:edad max password : periodo de aviso : Periodo de inactividad
+```
+
+**login** Nombre de usuario
+
+**password** Contraseña cifrada
+
+**Fecha del último cambio de contraseña**: En días desde el 1 de enero de 1970 (Unix epoch)
+
+**Edad min contraseña** Cantidad minima de días hasta poder cambiar la contraseña de nuevo
+
+**Edad Max Contraseña** Cantidad de días hasta que la contraseña expire
+
+**Periodo de aviso** Días hasta la fecha de expiración
+
+**Periodo de inactividad** Días desde que la contraseña expiró hasta que se desactiva la cuenta del usuario
+
+```{bash}
+login:!:......  Desactivar el usuario (no puede entrar en su cuenta)
+login:VACIO:.... Entrar sin contraseña (NO HACER)
+```
+
+Otra forma de eliminar/desactivar la contraseña es
+
+```{bash}
+$passwd -dl usuario
+```
+
+### Creación de usuarios en arch linux
+
+1.  Hacerse root
+
+2.  Crear el usuario
+
+    ```{bash}
+    useradd -m -G wheel -s /bin/bash nombre_usuario 
+    ```
+
+    m - crea el home
+
+    G wheel - Añade el usuario al grupo wheel que le da permisos sudo
+
+3.  darle contraseña
+
+    ```{bash}
+    sudo passwd nombre_usuario
+    ```
+
+Para eliminar el usuario
+
+```{bash}
+userdel nombre_usuario
+```
+
+## ESTRUCTURA DE DIRECTORIOS EN LINUX
+
+**Directorio Raíz o ROOT (/)**
+
+- Desde dónde parten todos los demás directorios
+
+- Linux obedece a una estructura jerárquica de directorios en forma de árbol
+
+- Es donde está el arranque
+
+- Es similar al C:\\ de Windows
+
+**/bin**: Binarios de usuarios
+
+- Son comandos ejecutables que todo usuario puede usar por defecto
+
+- Está lleno de ficheros ejecutables tipo sh
+
+**/sbin** Binarios del root/sistema
+
+- Comandos que que están solo a disposición del root
+
+**/boot** Archivos de arranque
+
+- Archivos mínimos para el arranque de sistema (cargador grub, lilom kernel,...)
+
+- Los archivos que debe leer el sistema para el arranque no están completamente en boot sino también en /etc junto con otros archivos de configuración
+
+**/CD-ROM** Aparece en Linux viejos y Unix
+
+- Directorio histórico para CD-ROM, DVD o blue Ray
+
+- cuando detecta una de estas unidades la monta aquí
+
+- Es una ubicación temporal unicamente
+
+- en sistemas actuales, la ubicación estándar de los medios temporales (CDs, USB,...) se encuentra en **/media**
+
+**/dev** - Archivos de dispositivos (hardware)
+
+- Linux y Unix trabajan los dispositivos (tarjeta gráfica, ratón, teclado,...) como archivos especiales que los representan
+
+- **/dev/sda** Si este archivo existe, el disco duro arranca sino no arranca
+
+**/etc** - Archivos de configuración
+
+- Todos los archivos de configuración editables de todo el sistema
+
+- Se pueden modificar con un editor de texto desde terminal (nano, vi...)
+
+- hay archivos especiales en el /home del ususario
+
+**/home** - Directorios correspondientes a los usuarios del sistema. Contiene posicionamiento de inicio (comando pwd) de cada usuario a excepción del root
+
+- el usuario bob tiene el directorio de inicio **/home/bob**
+
+- contiene archivos de configuración como **bashrc**
+
+- Cada usuario solo tiene acceso de escritura, modificación, borrado y ejecución en su directorio pero nunca en el de otros
+
+- **IMPORTANTE** Al hacer adduser, el root crea el directorio /home/usuario pero no se crea la carpeta de Escritorio hasta que el usuario hace login al menos una vez
+
+**/lib** - Bibliotecas compartidas especiales. Contiene las bibliotecas/aplicaciones necesarias para dar soporte a archivos (ejecutables) que están en **/bin** y **/sbin**
+
+**/lost+found** - Archivos recuperados si el sistema de archivos falla (mal apagado, corte de corriente...)
+
+- Se realiza una verificación del sistema durante el arranque y cualquier archivo dañado se coloca aquí para tratar de recuperar la información
+
+- es automático del sistema
+
+**/media** - Punto de montaje automático de medios extraibles u otras particiones del sistema. (USBs,..)
+
+**/nmt** - Punto de montaje antiguo y manual de medios
+
+- Actualmente se hace en **/media**
+
+- Debe montarse a mano con
+
+  ```{bash}
+  $ mount -t direcorio_montaje dir_destino 
+  ```
+
+**\\opt** - Contiene subdirectorios para paquetes de software adicionales. Es comunmente usado por software propietario que no obedece a la jerarquía de archivos estándar
+
+- Por ejemplo, un programa propietario debe volcar sus archivos en /opt cuando se instala
+
+- **IMPORTANTE** Si el programa funciona, bien. Si no funciona, no le pasa absolutamente nada al sistema
+
+- En windows cuandose ejecuta un instalador, se sobre escribe el system32 o archivos del sistema, por ello puede que al reiniciar el sistema este no arranque
+
+- En Linux se descomprime el software en opt y se "prueba"
+
+- Solo se hace en programas que no se instalen mediante apt-get install
+
+**/proc** - Kernel y archivos del "procesador del sistema"
+
+**/root** - Directorio base del administrador del sistema
+
+- Está ubicado fuera del home del usuario
+
+**/run** - Archivos del estao de las aplicaciones
+
+- Este directorio es bastante nuevo y brinda a las aplicaciones un lugar para almacenar achivos transitorios "especiales" por algún motivo, (principalmente programación) y no deja almacenarlo en /temp
+
+**/srv** - Datos de servicios. Este directorio obtiene puntos de montaje especiales por ejemplo la configuración de FTP y el directorio base de usuario *anonymous*
+
+**/tmp** - Archivos temporales del sistema
+
+- Es donde se almacenan archivos temporales (documentos en uso en libre office por ejemplo)
+
+- Generalmente estos archivos se eliminan (no siempre) cuando se reinicia el sistema
+
+- Aunque se puede borrar el contenido dentro, no se recomienda hacerlo. Muchas veces una app guarda archivos en /tmp para arrancar antes o para arrancar desde el último documento abierto, si se borra no los encuentra y la app no abre
+
+**/usr** - Binarios de usuario y datos de su lectura. Contiene aplicaciones y archivos que usan los usuarios del sistema (/usr/bin) pero también datos de solo lectura
+
+- /usr/local - Aplicaciones compiladas de terceros
+
+**/var** - Archivos de datos variables. Es el opuesto al /usr. Aquí los datos son móviles.
+
+- Los archivos de registro se escriben en el directorio /var
+
+  - /var/log o /var/www/HTML/INDEX.HTML
+
+## HACER UN ARRANQUE DUAL
+
+Se necesita un USB booteable
+
+1.  Conectar el USB booteable
+2.  Ver que particiones hay en el sistema y preparar una (gparted live)
+3.  Apagar el PC y volver a encenderlo
+4.  Elegir un SO de lo que hay en le USB booteable
+5.  Iniciar el proceso de instalación
+    1.  Durante la instalación en las parcticiones seleccionar la partición que preparaste antes
+    2.  La swap es común
+6.  Instalar
+7.  Encender. Te deja elegir el SO
+
+Al poner la ISO, debe detectar que hay otro SO anterior y te tiene que dejar instalar el nuevo al lado
+
+Al hacer dual boot con windows primero va el windows más nuevo, luego el más viejo y al final linux. Windows cuando instala necesita unos scripts o archivos en la cabecera del disco o en la partición primaria. Si arrancas primero linux, el arranque de windows lo ve y lo borra, escribiendo su arranque encima.
+
+Linux es capaz de detectar el arranque de windows, lo mete en en escudo llamado grubs. Cuando windows recibe una actualización ve el grubs y lo borra o sobre escribe y entonces solo arranca windows.
+
+Los grubs de windows nuevos son solo extensiones de los que tenian windows antiguos. Si instalamos un windows antiguo detrás de uno nuevo se escribe el grubs antiguo y el windows más nuevo no arranca.
+
+Aun así hay SO que se llevan mal entre si en boot dual y no dejan arrancar.
+
+## INSTALAR/DESINSTALAR PROGRAMAS
+
+La instalación por interfaz gráfica es muy lenta y puede dar muchos fallos de caché durante instalación.
+
+Primero siempre comprobar los repositorios
+
+```{bash}
+sudo apt-get update && sudo apt-get upgrade 
+sudo pacman pacman -Syy && sudo pacman -Syu #arch linu
+```
+
+para instalar paquetes que estén en los repositorios
+
+```{bash}
+sudo apt-get install nombeprograma
+sudo apt-get install blender 
+sudo apt-get install programa1 programa2 programa3
+sudo pacman -Rns programa #arch linux 
+sudo yay -S programa #arch linux
+```
+
+Preguntará contraseña y si estás seguro de si quierese instalar
+
+Siempre que se pueda, es preferible instalar programas de repositorios ya que están testados y son seguros
+
+**Como instalar programas de terceros**
+
+1.  Instalar el instalador de programas
+
+    ```{bash}
+    sudo apt-get install gdebi
+    ```
+
+2.  Descargar el programa como un archivo .deb
+
+3.  Instalar el programa con gdebi
+
+    ```{bash}
+    sudo gdebi paquete.deb
+    sudo gdebi opera.deb
+
+    ```
+
+4.  Para desinstalar programas
+
+    ```{bash}
+    sudo apt-get remove --purge programa
+    sudo apt-get remove --purge gnome-chess
+    ```
+
+**Como instalar archivos .deb en arch linux**
+
+1.  Instalar debtap
+
+    ```{bash}
+    sudo yay -S debtap
+    sudo pacman -Rns debtap
+    ```
+
+2.  Actualizar la base de datos de debtap
+
+    ```{bash}
+    sudo debtap -u
+    ```
+
+3.  Convertir el archivo de deb a pkg.tar.zst
+
+    ```{bash}
+    debtap programa.deb
+    ```
+
+    esto crea un archivo programa.pkg.tar.zst
+
+4.  Instalar el programa
+
+    ```{bash}
+    sudo pacman -U programa.pkg.tar.zst
+    ```
+
+## CONCATENACIÓN DE ÓRDENES
+
+Es ordenar varias órdenes de forma secuencial de forma automática, si la primera se hace de forma exitosa, se pasa a la segunda.
+
+```{bash}
+Orden 1 && Orden 2 && Orden 3 && ....
+Sudo apt-get update && sudo apt-get upgrade && sudo apt-get autoremove && sudo autoremove autoclean
+```
+
+Poner solo **&** hace que la acción 2 corra en segundo plano
+
+**Tuberías/Pipes**
+
+```{bash}
+Orden 1 || Orden 2 || Orden 3 || ....
+```
+
+Esto significa que haga la segunda órden aunque falle la primera.
+
+## ATAQUE DE ESCANOGRAFÍA
+
+Es esconder un archivo de texto en una imágen
+
+1.  Instalar un compresor de archivos (zip,7zip,winrar...)
+
+    ```{bash}
+    sudo apt-get install zip 
+    ```
+
+2.  Descargar de internet una imágen (jpg, jpeg,png,...) o otro tipo de archivos (.mp3, .mp4,...)
+
+3.  Crear un Zip con el documento que se quiere esconder
+
+    ```{bash}
+    zip documento.zip importante.txt 
+    ```
+
+    Esto convierte importante.txt en un zip llamado documento.zip
+
+4.  Eliminar el archivo original (importante.txt) para esconder pruebas
+
+    ```{bash}
+    rm -i importante.txt 
+    ```
+
+5.  Anexionar el jpg al zip
+
+    ```{bash}
+    cat imagen.jpg documento.zip > imagen_2.jpg
+    ```
+
+6.  Eliminar imagen.jpg y el zip para esconder pruebas
+
+7.  Para volver a obtener el archivo solo hay que descomprimir la imagen_2.jpg
+
+Todo fichero tiene una suma de comprobación única que dice si ha sido alterado pero esto solo se puede saber si comparas el archivo original con el alterado. Para eso se necesita la suma de comprobación
+
+```{bash}
+md5sum -b imagen.jpg #b lee la suma en binario
+sha256sum -h imagen.jpg 
+```
+
+md5sum y sha256sum aplican la operación suma sobre el hash del archivo
+
+## DIRECTORIOS Y FICHEROS EN LINUX
+
+En Linux un fichero o un directorio tiene propiedades mientras que en Windows es el usuario el que tiene propiedades
+
+**¿Qué Puede contener un directorio en Linux?**
+
+- Otros directorios
+
+- Ficheros: un programa no es más que un fichero
+
+Los ficheros **NO** pueden contener otros ficheros o directorios, un fichero solo puede contener información o datos
+
+```{bash}
+pwd #obtener el posicionamiento, donde estoy ahora
+cd Escritorio # change direcotry. Ve dentro del directorio Escritorio
+cd .. #vuelve al directorio anterior
+mkdir Datos # Crear el directorio datos 
+tocuh importante.txt #crea un archivo 
+nano importante.txt 
+cat > importante.txt
+ls #muestra los archivos y directorios en el directorio actua 
+ls -a #muestra TODOS los archivos y directorios, incluidos los ocultos 
+ls -l #muestra los archivos y directorios junto con sus permisos 
+ls -la #muestra los permisos de TODOS los archivos y directorios
+tree #muestra todo el árbol de directorios. A veces hay que instalarlo 
+```
+
+### Enlaces
+
+Los enlaces son accesos directos. En windows un acceso directo solo llama a un ejecutable, en Linux las posibilidades son más amplias
+
+1.  Crear ejecutables
+2.  A modo de asociación de ficheros
+3.  Sobre directorios
+
+**Enlace duro (Hard link)** - Solo es posible en Linux
+
+- En caso de que el archivo origen se elimine, el archivo enlace no está afectado y puede reestablecer el fichero origen
+
+- No se permiten enlaces fuertes sobre directorios
+
+  ```{bash}
+  ln /home/usr/Escritorio/enlace1.txt /home/usr/enlazado.txt
+  ```
+
+  Enlaza el fichero enlace1 al fichero enlazado de forma fuerte
+
+**Enlace bando (Soft link)** - Exactamente igual que en Windows
+
+- Si al fichero origen le ocurre algo, el enlace se considera roto, no funciona
+
+  ```{bash}
+  ln -s /home/usr/Escritorio/enlace2 /home/usr/enlazado
+  ```
+
+Enlaza el directorio enlace2 al directorio enlazado de forma suave
+
+### Permisos de ficheros y directorios
+
+Al hacer **ls -l** se ven los permisos de los archivos y toda la información al respecto
+
+**-rw-r–r- -** Permisos del archivo
+
+```         
+- Significa fichero
+d Significa directorio
+l Significa enlace 
+r permiso de lectura (read)
+w permiso de escritura (write)
+x Permiso de ejecución (run)
+```
+
+El primer caracter es el tipo de elemento (directorio, fichero o enlace), los 3 siguientes los permisos aplicados al usuario (u), los 3 siguientes los permisos del grupo al que pertenece el usuario (g) y los 3 finales los permisos del grupo otros (o)
+
+**1** - Enlaces si los hay
+
+**usuario10** - Usuario del propietario
+
+**usuario10** - Grupo del propietario
+
+**0** - Tamaño en bytes
+
+**may 20 10:42** - fecha del último acceso
+
+**importante.txt** - Nombre del fichero
+
+### Modo relativo de cambio de permisos
+
+El modo relativo de permisos respeta los permisos anteriores que no se tocaron
+
+```{bash}
+chmod u+w fichero.txt # da permisos de escritura al usuario sobre fichero
+chmod u-w fichero.txt #quitale permiso de escritura al usuario 
+chmod ugo-rw fichero.txt #quitale permisos de lectura y escritura a todos
+chmod ugo+rwx fichero.txt #dale todos los permisos a todos 
+```
+
+### Modo absoluto de permisos
+
+El modo absoluto de permisos reescribe por completo los permisos del archivo
+
+```         
+4 - Lectura 
+2 - Escritura
+1 - Ejecución
+4+2=6 - Lecura + escritura 
+2+1=3 - Ejecución + escritura
+4+2+1=7 - Todos los permisos
+```
+
+```{bash}
+chmod 000 fichero.txt #Eliminar todos los permisos a todo el munod 
+chmod 777 fichero.txt #Dale todos los permisos a todo el mundo 
+```
+
+[Un fichero recién creado tiene de serie los permisos 644 y un directorio 755]{.highlight}
+
+## SERVIDOR LINUX
+
+Toda red se divide en lógica y física
+
+**Red física**: Dispositivos (hardware) que hacen la red (routers, switch,equipos, cableado...)
+
+**Red lógica**: Protocolos, sistemas, direcciones (notaciones) y puertos
+
+[Siempre antes de montar un servidor hay que saber como está montada la Red y que direcciones hay libres]{.highlight}
+
+**Router** - Dispositivo de capa 3 en el modelo OSI que interconecta una red con otra de tipo diferente
+
+- **Dirección pública del router** con la que me salgo a internet
+
+- **Dirección privada del router** A la que conecto dispositivos (mi movil, pc,...)
+
+- El router tiene una IP fija pero suminstra IPs a los dispositivos conectados de forma aleatoria por DHCP
+
+**Switch** - Intercambiador multipuerto. La información entra por un puerto y sale por otro puerto sin molestar a los demás
+
+**HUB** - Repetidor multipuertos que recibe la señal por un puerto, la limpia, la retemporiza y la vuelve a enviar por todos los demás puertos menos por el que la recibió
+
+**Dynamic Host Control Protocol (DHCP)**- Protocolo mediante el cual se suministran direcciones IP al azar a cada dispositivo de la Red.
+
+Es como si hubiera un coupier (el router) con una baraja de cartas. Cada persona que se sienta a la mesa recibe una carta única que además debe enseñarle solo al coupier para que la anote y descarte. El coupier además tiene el derecho de requerirle su carta al jugador y darle otra distinta (renegociar la conexión)
+
+**BOOT P** - Es un protocolo pra suministrar IP al azar como DHCP pero no perite renegociar la conexión. El router solo recupera la IP cuando se cierra la sesión o se apaga la máquina. El usuario mantiene la conexión pase lo que pase hasta apagado.
+
+**IP Estática** - Se asigna a una máquina una IP fija que mantiene en el tiempo. El coupier siempre le tiene que dar la misma carta obligatoriamente. Solo se debe usar IP fijas para
+
+- Routers
+
+- Servidores
+
+- Impresoras en Red
+
+- Cualquier dispositivo capa 3 del modelo OSI (Todo lo que se pueda configurar por IP)
+
+### Modelo OSI (OPEN SYSTEMS INTERCONNECTION)
+
+Modelo de referencia para protocolos en Red. Tiene 7 capas diferentes
+
+1.  **Física** - Define las especificaciones electricas y fisicas de los dispositivos
+2.  **Enlace de datos** - Proporciona direccionamiento físico y procedimientos de acceso a medios
+3.  **Red** - Responsable del direccionamiento lógico y el dominio del enrutamiento
+4.  **Transporte** - Proporciona transporte confiable y control del flujo a través de la red
+5.  **Sesión** - Establece, administra y finaliza las conexiones entre aplicaciones locales y remotas
+6.  **Presentación** - Transforma el formato de los datos y proporciona una interfaz estándar para la siguiente capa de aplicación
+7.  **Aplicación** - Responsable de los servicios de red para las aplicaciones
+
+**Otros Modelos**
+
+- Modelo TCP/IP - 4 capas (Física, Enlace/Red, Transporte y Aplicación)
+
+- Modelo hibrido - 5 Capas, creado y usado por CISCO (Física, Enlace, Red, Transporte y Aplicación)
+
+### Parte lógica de la red
+
+**Protocolo** - Lenguaje comun entre ordenadores
+
+**Dirección IP** - Se dividen en direcciones públicas y privadas, es decir para internet y para redes privadas
+
+- Están gestionadas por un organismo llamado IANA
+
+  - Clase A: 10.0.0.0
+
+  - Clase B: 172.26.0.0
+
+  - Clase C: 192.168.0.0
+
+  - El resto de direcciones pertenecen a internet y las provee el ISP (Internet service provider- Telefonica, Vodafone, AT&T,..)
+
+**Puerto** - Conexión de aplicaciones o programas. Puede venir por defecto con el SO o con la aplicación o programa
+
+En una red de clase C puede haber hasta 252 dispositivos aunque hay 255 direcciones pero 252 son las disponibles
+
+- **192.168.1.0** - Dirección de red
+
+- **192.168.1.1** - Dirección IP del router
+
+- **192.168.1.255** - Dirección de multidifusión (Broadcast)
+
+Las primeras 15-16 IP disponibles se reservan para dipositivos (routers, switches, impresoras) y las 15-16 últimas para servidores
+
+### Máscaras de subred
+
+La máscara de subred identifica en la IP que parte es de la red y es igual para todos y que parte de la IP es del dispositivo.
+
+La máscara más común es 255.255.255.0
+
+En binario sería 11111111.11111111.11111111.00000000
+
+255 significa que esa parte de la IP pertenence a la Red
+
+0 significa que esa parte pertenece al dispositivo.
+
+También se puede poner como 192.168.1.35/24
+
+el 24 viene por 24 bits de 1s seguidos en la máscara en binario
+
+En redes clase B (172.26.0.0) sería
+
+255.255.0.0 o 172.26.33.80/16
+
+En redes clase A (10.0.0.0) sería
+
+255.0.0.0 o 10.33.20.130/8
+
+**Como saber el número máximo de dispositivos en cada red**
+
+Usando la máscara de subred hacemos
+
+$$Numero~IPs~maximo = 2^n - 2$$
+
+n es el numero de bits en 0 y se restan 2 direcciones (router y broadcast)
+
+En clase A:
+
+$$IPs = 2^{(3*8)} -2 = 16,777,214$$
+
+En clase B:
+
+$$ IPs = 2^{(2*8)} -2 = 65,532$$
+
+En clase C:
+
+$$IPs = 2^8 -2 = 252$$
+
+*truco para clase C*
+
+Con una máscara de subred tipo 255.255.255.x
+
+$$IPs = 256-x -2 $$
+
+Para por ejemplo 255.255.255.240
+
+240 en binario es 11110000 - 2⁴ -2 =14
+
+256-240-26 = 14
+
+### Como se defiende un Router (ataque de denegación de servicios)
+
+El router es como un operario que lleva y trae paquetes. Cada usuario pide y trae distintos paquetes y el router tiene cierta capacidad para repartirlos y está obligado a dar este servicio. Cuando el router recibe demasiadas peticiones, empieza a descartar algunos y le dice al usuario que vuelva a traerlos o pedirlos.
+
+Cuando el router está demasiado saturado deja de hacer peticiones y se convierte en un switch. Los usuarios dejan de tener acceso a internet. Si el ataque continua el router se convierte en un switch, la información fluye de forma desbordada entre usuarios.
+
+### Como ver la IP del router
+
+Requiere de un programa llamado neofetch o fastfetch
+
+1.  Instalar
+
+```{bash}
+sudo apt-get install neofetch 
+sudo apt-get install fastfetch 
+sudo pacman -S fastfetch #arch Linux
+```
+
+2.  Correr el programa 1 vez
+
+    ```{bash}
+    neofetch 
+    fastfetch
+    ```
+
+3.  Ir al archivo de configuración del programa, buscar localip o public ip y descomentarla o añadirla
+
+    ```{bash}
+    sudo nano /home/usr/.config/neofetch/config.com
+    ```
+
+    En fastfetch hay que generar el archivo de configuración antes haciendo
+
+    ```{bash}
+    fastfetch --gen-config
+    ```
+
+    Luego
+
+    ```{bash}
+    sudo nano /home/usr/.config/fastfetch/config.jsonc
+    ```
+
+4.  Añadir en modules *publicip* para neofetch y *localip* para fastfetch
+
+Sin conexión a internet neofetch y fastfecht funcionan pero NO MUESTRAN LOCAL IP
+
+### Como saber que IPs están libres en la red
+
+Se necesita un tipo de programa lamado sniffer (Angryip por ejemplo) [Cualquier script o programa que obtenga información de un equipo sin admisión del usuario es ilegal]{.highlight}
+
+1.  Descargar angryip como un .deb
+
+2.  Instalarlo con gdebi
+
+    ```{bash}
+    sudo gdebi angryip.deb
+    ```
+
+    Pedirá instalar java-runtime (\>17)
+
+    ```{bash}
+    sudo apt-get install default-jdk 
+    ```
+
+3.  Correr angryip scanner
+
+4.  Quitar todas las pestañas que digna "Send anonymous messages..."
+
+**Azúl** - Equipo activo pero con puertos cerrados
+
+**Verde** - Equipo activo y con puertos abiertos
+
+**Rojo** - Equipo inactivo/muerto. **IP LIBRE**
+
+Existen otras opciones mejores que angryip scanner para scanners de IP que corren en una terminal como arp-scan y nmap
+
+```{bash}
+sudo apt-get install arp-scan 
+sudo arp-scan --local 
+sudo apt-get install nmap 
+sudo nmap -sn 192.168.1.0/24 #hace un scanneo de todas las IP de ese rango rapido   -sn dice que no haga escaneo de puertos 
+sudo nmap -O -F 192.168.1.0/24 #Hace escaneo rapido (F) y devuelve también el sistema operativo de la máquina (O)
+
+```
+
+### Instalar un servidor Linux (Ubuntu server 20.04)
+
+Que se necesita:
+
+- ISO Ubuntu server 20.04
+
+- Dirección IP estática
+
+  - Libro de red o sniffer
+
+- RAM - El mínimo son 2048 MB oero mejor 4096 MB
+
+- ADAPTADOR PUENTE OBLIGATORIO
+
+  - NO OLVIDAR PASAR NAT A BRIDGE
+
+1.  Crear una nueva máquina virtual
+
+    - Nombre: ubuntu server 22.04
+
+    - 4096 RAM
+
+    - RED: BRIDGE
+
+2.  Configurar la máquina virtua
+
+    - Sistema: 2 CPUs. Ubuntu server 20.04 solo requiere 1 CPU, pero las posteriores obligatoriamente requieren 2
+
+    - Seleccionar la ISO
+
+    - RED: BRIDGE
+
+3.  Iniciar máquina
+
+4.  seleccionar idioma
+
+5.  Aparecerá una pantalla en la que dice que hay una nueva version de ubuntu server. Decirle que no quireres.
+
+6.  Seleccionar la distribución de teclado
+
+    - Para moverse usar tabulador y fechas
+
+    - Seleccionar teclado en español, variante español - Hecho y enter
+
+7.  Aparecerá una pantalla para cambiar las conexiones de red. Por defecto está en DHCP
+
+    - Subred: 192.168.1.0/24
+
+    - Dirección: 192.168.1.211
+
+    - Puerta de enlace: 192.168.1.1
+
+    - Servidores de nombre: 8.8.8.8, 8.8.4.4
+
+    - Dominios de búsqueda: EN BLANCO
+
+    - Guardar y hecho
+
+8.  En la pestaña de conexiones de red aparecerá ip estática
+
+9.  Proxy address - Dejar vacio
+
+10. Pone que hay un mirror activo alternativo para ubuntu - Dejarlo como está
+
+11. Configurar disco duro
+
+    - \(x\) use an entire disk \[Vbox ...local/ 40GB\]
+
+    - Quitar (x) de set up this disk as LVM group
+
+    - Quitar (x) de encrypt the LVM group with LUKS
+
+    - Para desmarcar una opción, usar barra espaciadora
+
+12. Puntos de montaje y particiones - Dejarlo tal cual está
+
+13. Te pide nombre de usuario y contraseña
+
+14. Instalar el server
+
+15. Aparece que la instalación terminada pero abajo aparece qe está actualizando NUNCA PARAR LA ACTUALIZACION
+
+16. Cuando termine reiniciar el server. Saldrán errores de CD-ROM, son normales
+
+17. Hacer login
+
+    ### Cambiar la dirección IP
+
+<!-- -->
+
+1.  Despertar al root
+
+    ```{bash}
+    su - root
+    ```
+
+2.  Cambiar el netplan
+
+    ```{bash}
+    cd /etc/netplan
+    ls #ls -la 
+    cat 0-installer-config.yaml
+    ```
+
+    Aparece esta pantala
+
+    ```         
+    #This is the network config written by subiquity
+    network:
+      enp0s3: #TARJETA DE RED
+        addresses: 
+        -192.168.1.211/24 #IP estática
+        gateway4: 192.168.1.1 #Router
+        nameserver:
+        -8.8.8.8 #DNS primario
+        -8.8.4.4 #DNS secundario
+        search: []
+      version: 2
+    ```
+
+    Solo hay que cambiar la IP estática con un editor como nano
+
+3.  Aplicar los cambios
+
+    ```{bash}
+    sudo netplan apply #Impoetante hacerlo como root
+    ```
+
+4.  Comprobar los cambios
+
+    ```{bash}
+    sudo apt-get install net-tools
+    ifconfig #Da información sobre la tarjeta red
+    ```
+
+**ifconfig** Es un comando que devuelve la IP de la maquina junto con la máscara de subred
+
+- Corre en root
+
+- Necesita instalación previa con net-tools
+
+- en windows se llama ipconfig
+
+**ip a** Da información sobre la ip
+
+## ESTUDIO DE PUERTOS
+
+**netstat -a** - Muestra todos los puertos (mejor netstat -a \| more)
+
+**netstat -at** - puertos TCP
+
+**netstat -au** - Puertos UDP
+
+**netstat -l** - Puertos en escucha (listening)
+
+**netstat -lt** - Puertos en escucha (listening) de TCP
+
+**netstat -lu** - Puertos en escucha (listening) de UDP
+
+**netstat -lx** - Puertos en escucha de Unix
+
+**netstat -s** - Información sobre mensajes enviados, recibidos,...
+
+**netstat -tp** - Información sobre todos las aplicaciomes enviando o recibiendo información por internet
+
+**netstat -ie** - Exactamente igual que ifconfig
+
+**netstat -ap \| grep -ssh** - Que conexión está establecida por SSH
+
+## SCRIPTS EN BASH
+
+Los scripts deben empezar con:
+
+```{bash}
+#!/usr/bin/bash
+#Autor: 
+#Fecha de creacion:
+#Fecha de última modificacion:
+#version:
+#notas:
+#Que hace el programa
+```
+
+### Script de actualización
+
+Al correr el script, este actualiza totalmente el equipo y lo limpia también de forma automática, pero antes comprueba que hay conexión a internet por medio del comando ping
+
+```{bash}
+if ! ping -c3 -W2 8.8.8.8 &> /dev/null;then 
+  echo "NO INTERNET CONNECTION"
+  exit 1
+else 
+  echo "INTERNET CONNECTION"
+  ....
+```
+
+**if !** - If not (Si no x haz y)
+
+**ping -c3 -W2 8.8.8.8** - Envia 3 paquetes (-c3) ping al servidor DNS primario. Espera 2 segundos (-W2) a recibir respuesta
+
+- W mayúscula significa esperar x segundos a recibir respuesta y w minúscua significa que independientemente si se recibe respuesta o no, pare el ping x segundos
+
+**&\> /dev/null** - Redirecciona la salida de ping al archivo /dev/null. Todo lo que se meta en ese directorio desaparece, es un agujero negro
+
+```{bash}
+#!/usr/bin/bash
+#Autor: Nacho
+#Fecha de creación:25.05.2026
+#Fecha de última modificación:28.05.2026
+#version: 1.1
+#notas
+#Programa que actualiza el sistema
+if ! ping -c3 -W2 8.8.8.8 &> /dev/null;then
+  echo "NO INTERNECT CONNECTION"
+  exit 1
+else 
+  echo "INTERNET CONNECTION"
+  sleep 2 #congelar la pantalla por 2 segundos 
+  echo "Updating..."
+  sudo apt-get update 
+  echo "Upgrading..."
+  sleep 2
+  sudo apt-get upgrade -y #Al poner la y no pregunta si quieres actualizar 
+  echo "upgrading the system..."
+  sleep 2
+  sudo apt-get dist-upgrade
+  echo "cleaning..."
+  sudo apt-get autoclean && sudo apt-get autoremove
+  echo "Update done"
+fi
+```
+
+Para correr el programa
+
+```{bash}
+chmox +x actualizar.sh #darle permisos de ejecución al archivo 
+./actualizar.sh #Correr el archivo
+```
+
+### Script boton de apagado
+
+Boton simple de apagado. Al tocar el script debe apagar el sistema sin pedir contraseña
+
+```{bash}
+#!/usr/bin/bash
+#Autor: Nacho
+#Fecha de creación:25.05.2026
+#Fecha de última modificación:26.05.2026
+#version: 1.0
+#notas
+#Programa que apaga el sistema
+systemctl poweroff #No pide contraseña 
+#-----Otras formas de apagar ---------
+#sudo shutdown -h now
+#poweroff -i
+#init 0 #apagado de emergencia 
+#halt #apagado de emergencia. Apaga todos los servicios antes
+```
+
+### Script para memoria de la máquina en MB y GB, particiones del disco, versión y kernel, y fecha del sistema
+
+Piden todo eso por informe general
+
+```{bash}
+#!/usr/bin/bash
+#Autor: Nacho
+#Fecha de creación:25.05.2026
+#Fecha de última modificación:26.05.2026
+#version: 1.0
+#notas
+#informes
+echo "Readding memory..."
+sleep 3
+free -m # muestra memoria en MB
+free -m > informe.txt 
+sleep 3
+free -h 
+free -h >> informe.txt # añade nueva información a informe detrás de la anterior
+sleep 3
+#Para ver particiones hay que ser administrador
+echo "Readding partitions..."
+sleep 3
+sudo fdisk -l  #Muestra info sobre particiones
+sudo fdisk -l >> informe.txt 
+sleep 3 
+#Version del SO y kernel
+echo "Readding SO and kernel version..."
+sleep 3
+hostnamectl 
+hostnamectl >> informe.txt
+sleep 3
+#-----otras formas--------
+#lsb_release -a #para la version del SO
+#uname -a #para la version del kernel
+#uname -am
+#Mirar la fecha
+echo "Readdig system date..."
+sleep 3
+date 
+date >> informe.txt 
+```
+
+### Declaración de variables
+
+```{bash}
+x=37
+echo $x 
+--Devuelve 37-- 
+```
+
+```{bash}
+#!/usr/bin/bash
+#Autor: David
+#Fecha de creación:10.12.2019
+#Fecha de última modificación:28.05.2026
+#version: 1.0
+#notas
+#calculadora
+echo "Este programa trabaja con numeros"
+echo "introducidos por teclado"
+sleep 5
+clear
+echo "Introduccion de variables"
+echo -n "introdice el primer numero" #la -n evita el salto de linea al meter la info
+read arg1
+echo -n "itroduce el segundo numero"
+read arg2
+suma=`epxr $arg1 \+ $arg2`
+resta=`expr $arg1 \- $arg2`
+multi=`expr $arg1 \* $arg2`
+division=`expr $arg1 \/ $arg2`
+echo "suma = $suma"
+echo "resta = $resta"
+echo "multi = $multi"
+echo "div = $division"
+```
+
+### Como hacer un menú
+
+```{bash}
+#!/usr/bin/bash
+#Autor: Nacho
+#Fecha de creación:28.05.2026
+#Fecha de última modificación:28.05.2026
+#version: 1.0
+#notas
+#Menu muy basico 
+PS3="opcion" #PS3 es una variable del sistema
+select i in listado quien salir
+do case &i in 
+  listado) ls -la;; #;; cierra la clausula sino se pone, hace todas las opciones
+  quien) who;;
+  salir) exit 0;;
+  *) echo "Opcion incorrecta";;
+esac #case se cierra con esac 
+done #do se cierra con done, If se cierra con if
+```
+
+## CONEXIONES REMOTAS
+
+**ssh** - Protocolo que hacer conexión contra el puerto 22
+
+- usuario, contraseña y todo lo que se haga está cifrado
+
+- Roba mucho ancho de banda
+
+- disponible en windows y linux
+
+  ```{bash}
+  sudo apt-get install ssh
+  ssh usuario@IP
+  ssh -X usuario@IP #Ejecutar con interfaz gráfica. Luego puedes correr ibreoffice por ejemplo y abre libreoffice en el servidor pero gráficamente lo ves en tu pc
+  ```
+
+**scp** - Protocolo para enviar o recibir archivos de un pc a otro de fora remota. Es una especie de ssh (va al puerto 22). Significa secure copy
+
+```{bash}
+scp importante.txt usuario@192.168.1.203:/home/usuario #subir importante.txt  al serve
+scp usuario@192.168.1.203:/home/usuario/documento.txt /home/usuario/desktop/descarga.txt 
+#descargar el docuemnto.txt y renombrarlo a descargas.txt
+scp -r /carpeta/local/usuario/ usuario@192.168.2.203:/carpeta/remoto 
+#Copiar una carpeta completa 
+```
+
+**telnet** - Protocolo que hace conexión contra el puerto 23
+
+- Nada está cifrado y no requiere contraseña
+
+- Es mucho más rápido, no requiere prácticamente ancho de banda
+
+- Solo permite 2 conexiones simultáneas
+
+  ```{bash}
+  sudo apt-get install telnet #cliente 
+  sudo apt-get install telnetd #servidor 
+  telnet 192.168.1.123
+  ```
+
+Antes de hacer una conexión hacer un Ping contra la máquina que quieres conectarte
+
+```{bash}
+ssh usuario@IP
+ssh usuario13@192.168.1.123
+logout # cerrar la conexión ssh
+```
+
+Al hacer eso dice que la autenticidad del usuario en 192.168.1.123 no está establecida y que va a crear una clave criptográfica. Esto lo hace solo cuando conecta dos máquinas distintas por primera vez. Luego tiene la clave guardada y no hace falta crearla.
+
+### Telnet y SSH en Windows
+
+SSH está instalado de serie en windows, pero telnet no
+
+- En windows XP, 7 y 8 - Hay que instalar server y cliente de telnet
+
+- En windows 10 y 11 - Solo puede instalar cliente
+
+Para instalar telnet en windows
+
+1.  Ir al panel de control
+2.  Ir a programas y característica
+3.  Activar y desactivar caracteristicas de windows
+4.  buscar cliente telnet y marcarlo
+    - El server telnet está más abajo en windows xp, 7 y 8
+5.  probarlo
+
+**IMPORTANTE** - SSH exige contraseña, así que no se puede hacer contra usuarios sin contraseña
+
+### Redireccionamiento de puertos
+
+1.  cambiar el archivo de configuración
+
+    ```{bash}
+    sudo nano /etc/ssh/ssh_config
+    ```
+
+2.  Buscar la línea que dice #Port 22
+
+3.  descomentar la línea y cambiar el puerto
+
+4.  mirar si aceptó los cambios
+
+    ```{bash}
+    cat /etc/ssh/ssh_config.d
+    ```
+
+5.  reactivar el servicio
+
+    ```{bash}
+    systemctl restart sshd 
+    ```
+
+## COMPROBAR LA TARJETA DE RED
+
+Se usa una dirección prohibida
+
+```{bash}
+ping -c3 127.0.0.0 
+ssh usuario@127.0.0.0
+telnet 127.0.0.0
+scp documento.txt usuario@127.0.0.0:/home/usuario/Escritorio
+```
+
+Todos esos comandos funcionan aunque la tarjeta red vaya a si misma, sin salir a la red ni a internet
+
+## SERVIDOR FTP
+
+**FTP** - File transfer protocol .
+
+- Es un protocolo de transferencia de archivos de Linux a otros SO (windows, linux, android...)
+
+- Puerto 20 - Puerto FTP pasivo
+
+- Puerto 21 - Puerto FTP activo
+
+1.  Instalar FTP en ubutu/debian
+
+    ```{bash}
+    sudo apt-get install vsftp
+    ```
+
+2.  Hacer una copia de seguridad de del fchero **vsftp.conf**
+
+    ```{bash}
+    sudo cp /etc/vsftp.conf /root/vsftp.conf
+    ```
+
+3.  Editar el arhivo vsftp.conf
+
+    ```{bash}
+    sudo nano /etc/vsftp.conf
+    ```
+
+    ```         
+    #allow anonymous FTP?
+     anonymous_enable = NO                        #CAMBIARLO A YES
+
+    #Uncomment this to enable any form of FTP write comm
+    # write_enable = YES #DESCOMENTAR ESTA LINEA
+
+    #Uncomment this to allow the anonymous FTP user to upload files. This has an effect if #the above global wrtite enable is activated. Also you will obviously need to create a #directory writtable by the FTP user 
+    # anon_upload_enable = YES                    #DECOMENTAR
+
+    #Uncomment this if you want the anonymous FTP user to be able to create new directories
+    # anon_mkdir_write_enable = YES               #DESCOMENTAR 
+
+    #You may fully customise the login banner string:
+    # ftp_banner = Welcome to blah FTP service    # Descomentar esta linea y cambiar blah                                                  por un nombre para el server
+    ```
+
+Después guardar y salir del archivo
+
+4.  Reiniciar la máquina
+
+    ```{bash}
+    sudo shutdown -h now
+    systemctl poweroff 
+    ```
+
+para probarlo crear unos documentos en el servidor e intentar copiarlos desde windows o otra máquina
+
+El usuario anónimo puede mirar dentro del directorio **/srv/ftp** pero NO tiene permiso de escritura, para eso debes ser root
+
+## Como conectarse a un FTP
+
+en windows
+
+```{bash}
+c:\ ftp
+ftp> open IP 
+ftp> open 192.168.1.211
+en internet explorer ftp:// IP del server 
+aparecerá un explorador de archivos con todos los archivos del FTP
+```
+
+En Linux
+
+```{bash}
+ftp 
+ftp> open IP del server
+```
+
+Para descargar y subir archivos
+
+```{bash}
+put nombre_archivo    #Sube archivos desde el PC al server
+put ruta + nombre_archivo 
+put /home/usuario10/Escritorio/importante.txt
+put backup.sql backup2026.sql     #Sube un archivo y renombralo
+mput *                #Sube multiples archivos al server
+#m put te preguntará archivo por archivo si queires subirlo para evitarlo corre prompt
+get nombre_archivo    #Descarga archivos
+get ruta+nombre archivo 
+get backup2026.sql backup.sql   # descarga archivos y renombralos
+mget *                #Descarga multiples archivos a la vez
+```
+
+Para desconectar la conexión ftp:
+
+```{bash}
+ftp> bye
+```
+
+## RESOLVIENDO PROBLEMAS DE CONECTIVIDAD RED
+
+1.  Comprobar la tarjeta RED
+
+    ```{bash}
+    $ping -c3 127.0.0.1
+    ```
+
+2.  Comprobar si llego al router
+
+    ```{bash}
+    $ping -c3 192.168.1.1
+    ```
+
+3.  comprobar la ruta al gateway
+
+    ```{bash}
+    $ip route show
+    # debe aparecer algo como 
+    default dev enp0s3 scope link metric 
+    IP dev enp0s3 proto kernel scope link src IP 
+    ```
+
+4.  Comprobar el archivo de DNS
+
+    ```{bash}
+    $sudo nano /etc/resolv.conf
+    #Copiar esto
+    nameserver 8.8.8.8
+    nameserver 8.8.4.4 # También se puede usar 1.1.1.1
+    ```
+
+5.  Pedirle una nueva IP al router
+
+    ```{bash}
+    $sudo dhclient -r enp0s3   # Mata el proceso DHCP y le devuelve la IP al router
+    $sudo dhclient enp0s3      # Le pide otra IP al router
+    $sudo dhclient -v enp0s3   # v le dice que imprima en pantalla todo el proceso de pedir                             una nueva IP
+    # dara esto 
+    DHCPDISCOVER ..... # PC: "Hay algún servidor DHCP por aquí? Necesito una IP"
+    DHCPOFFER........  # Router: "Hola soy un router, tengo esta IP libre para ti"
+    DHCPPREQUEST ....  # PC: "OK me quedo con la IP"
+    DHPACK ..........  # Router: "Entendido, ya es tu IP. Aqui tienes el resto de                               configuracion"
+    ```
+
+    Si no pasa de DHCP DISCOVER, significa que el PC no encuentra ningun DHCP, problema del router posiblemente
+
+    6.  usar **nmcli - Network Manager command line interface**
+
+        ```{bash}
+        $nmcli device status      #Que tarjetas de red hay conectadas
+        $nmcli connection down nombre_conexion    # Apagar la conexion
+        $nmcli connection down enp0s3
+        $nmcli connection up enp0s3
+        $nmcli device wifi list                   # Ver las wifi disponibles
+        $nmcli device wifi connect "nombre_wifi" password "contraseña_wifi" #conectarse al                                                                      wifi
+        ```
+
+        Como configurar una IP estática por nmcli
+
+        ```{bash}
+        $nmcli connection modify enp0s3 ipv4.method manual    #cambiar a IP estática
+        $nmcli connection modify enp0s3 ipv4.addresses 192.168.1.30/24 #Definir IP y                                                                       mascara de subred
+        $nmcli connection modify enp0s3 ipv4.gateway 192.168.1.1       #Gateway al router
+        $nmcli connection modify enp0s3 ipv4.dns "8.8.8.8,8.8.4.4"     #Servidores DNS
+        $nmcli connection up epp0s3                                    #Reiniciar el                                                                       servicio
+        ```
+
+        Como cambiar la IP a DHCP
+
+        ```{bash}
+        $nmcli connection modify enp0s3 ipv4.method auto      #Cambiar IP a dhcp 
+        #================Pasos opcionales===============
+        $nmcli connection modidy enp0s3 ipv4.addresses ""     #Limpiar IP antigua
+        $nmcli connection modify enp0s3 ipv4.dns ""           #Limpiar DNS antiguos
+        #===============================================
+        $nmcli connection up enp0s3                           #Reiniciar el servicio
+        ```
+
+## SERVIDOR SAMBA EN UBUNTU SERVER 20.04
+
+**PUERTOS SAMBA** - 139 y 443 (137 y 138 udp)
+
+1.  Instalar samba
+
+    ```{bash}
+    $sudo apt-get install samba       #instala smbd y nmbd
+    $sudo apt-get install smbclient   #instala el cliente samba
+    ```
+
+2.  Ver si los servicios están activados
+
+    ```{bash}
+    $sudo systemctl status smbd.service      #modo moderno de servicios 
+    $sudo smbd status                        #modo clásico de servicios 
+    $sudo systemctl status nmbd.service
+    $sudo nmbd status
+    ```
+
+    Debe aparecer que están cargados y activos (active, running and loaded). Si no es así se pueden activar con:
+
+    ```{bash}
+    $sudo systemctl restart smbd.service    #Activa los servicios de forma temporal
+    $sudo systemctl restart nmbd.service
+    $sudo systemctl enable smbd.service     #Activa los servicios de forma permanente
+    $sudo systemctl enable nmbd.service     #se activan al arrancar el server
+    ```
+
+3.  Creación de usuarios en el server (adduser nombre_usuario)
+
+    Es recomendable logearse con cada usuario para que se cree su home
+
+4.  Creación de recursos en el server y darles permisos
+
+    ```{bash}
+    $sudo mkdir /RED
+    $sudo chmod 777 /RED
+    $sudo mkdir /compartido 
+    $sudo chmod 777 /compartido 
+    $sudo mkdir /home/SAMBA
+    $sudo chmod 777 /home/SAMBA
+    $sudo mkdir /srv/samba    #No le damos permisos por que no queremos que el usuario                                pueda volver
+    $sudo mkdir /srv/samba/administracion
+    $sudo chmod 777 /srv/samba/administracion
+    $sudo mkdir /srv/samba/publico 
+    $sudo chmod 777 /srv/samba/publico 
+    ```
+
+5.  **COPIA DE SEGUIDAD DEL ARCHIVO smb.conf**
+
+    ```{bash}
+    $sudo cp /etc/samba/smb.conf /root/smb.conf
+    ```
+
+6.  Edición del fichero smb.conf
+
+    ```{{bash}}
+    [global]
+    ## Browsing/Identification ##
+      workgroup = INICIOMS    #para windows XP
+      #workgroup = WORKGROUP 
+      #client max protocol = NT1
+      #client max protocol = SMB3
+      client ipc max protocol = default   #comportamiento con el cliente por defecto
+      client ipc min protocol = default 
+      client max protocol = default
+      client min protocol = CORE    #Seguridad minima para el cliente  
+      #server max protocol = SMB3 
+      server max protocol = NT1
+      server min protocol = LANMAN1
+      ntlm auth = yes
+      lanman auth = yes
+      netbios name = BOB    #Nombre en red del server. No puede haber 2 servers con mismio
+      #netbios aliases = JHON     #alias en red
+    ##Networking#######
+      ;interfaces = 127.0.0.0/8 eth0   #IP especifica a la que hacer bind
+      ;bind interfaces only = yes      #solo conectar a la interfaz especifica
+    ###Debugging/accouting####
+      #Le dice a samba que use un archivo de logging para cada máquina que se conecte
+      log file = /var/log/samba/log.%m
+      #Máximo tamaño de cada archivo de logging en KiB
+      max log size = 1000
+      # Samba solo hace logs al archivo /var/log/samba/log.{smbd,nmbd}
+      logging = file
+      #Haz algo si Samba falla: envia un mail al admin
+      panic action = /usr/share/samba/panic-action %d
+    ### Atuthentication ####
+    #define el uso del server
+    #Valores posibles: "standalone server", "member server", "classic primary domain #controller", "classic backup domain controller", "active directory domain controller", #
+      server role = standalone server
+      obey pam restrictions = yes 
+    # 
+      unix password sync = yes 
+      passwd program = /usr/bin/passwd %u
+      passwd char = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\password:* %n\n *password\supdated\ssuccessfully*
+      encrypt password = yes
+      pam password change = yes
+      map to guest = bad user
+    #### Domains #####
+    #Esta parte del script solo se usa en modo controlador de dominio primario, backup     # domain controller o domain logon
+    #Especifica donde está el direcotrio de perfil usuario desde el punto de vista cliente
+    ;     logon path = \\%N\profiles\%U
+    #     logon path = \\%N\%U\profile    #Otro modo usual de guardar el perfil de usuario #                                     #Por defecto de samba
+    ## Lo siguiente solo tiene efectos en caso de que se use domain logon
+    ## Especifica dónde está el home direcotry del usuario desde el punto de vista del    ## cliente
+    ;     logon drive = H:
+    #     logon home = \\%N\%U
+    ## Solo tiene efectos en domain logons 
+    ## Especifica que script correr durante el logon. Los scripts deben estar guardados en [netlogon]
+    ## Deben estar guardados en formato DOS
+    ;     logon script = logon.cmd
+    ## Lo siguiente deja crear usuarios UNIX en el controlador de dominio por medio de SAMR ## RPC pipe.
+    ## El ejemplo crea una cuenta de usuario sin contraseña (disable password)
+    ;     add user script = /usr/sbin/adduser --quiet --disable-password --gecos "" %u
+    ## Lo siguiente deja crear cuentas de máquina en el controlador de dominio por medio de ## SAMR RPC
+    ## El ejemplo asume que existe un grupo 'machines' en el sistema
+    ;     add machine scrpt = /usr/sbin/useradd -g machines -C "%u machine account" -d /var/lib/samba -s /bin/false
+    ## Esto permite crear grupos Unix en el controlador de dominio por medio de SAMR RPC   # pipe
+    ;     add group script = /usr/sbin/addgroup --force-badname %g
+    ######## Misc #################
+    # Estas lineas permiten customizar la configuración de máquina. El %m debe ser reemplazado por el   # nombre netbios de la máquina a conectar
+    ;     include = /home/samba/etc/smb.conf.%m
+    # Algunos ajustes por defecto para winbind. No ueses los mismos rangos para otras cosas
+    ;     idmap config * :                backend = tdb
+    ;     idmap config * :                range   = 3000-7999
+    ;     idmap config YOURDOMAINHERE :   backend = tbd
+    ;     idmap config YOURDOMAINHERE :   range   = 100000-999999
+    ;     template shell = /bin/bash
+    # Usershare options- opciones para permitir que usuarios no root compartir carpetas con # el 
+    # comando net usershate. 
+    # Maximo numero de usershare permitido = 0 significa que no está permitido/está desactivado
+    #     usershare max shares = 150
+    # Esto permite a usuarios con privilegios usershare crear compartidos publicos 
+          usershare allow guests = yes
+    ######## Share definitions ###########
+    [printers] 
+    # Impresoras ficticias
+          comment = All printers
+          browseable = no
+          path = /var/spool/samba
+          printable = yes 
+          guest ok = no 
+          read only = yes
+          create mask = 0700
+    [print$]
+    # Esto es para clientes windows, para que puedan descargarse los drivers de las las impresoras
+          comment = Printer Drivers 
+          path = /var/lib/samba/printers
+          browseble = yes
+          read only = yes 
+          guest ok = no
+
+    # Descomentar esto para permitir la administración en remoto de impresoras windows
+    # Puede que 'lpadmin' necesite ser cambiado por el nombre del grupo al que tus         # administradores pertenecen
+    # Tambien debes dar permios unix apropiados al directorio de drivers para que esos     # usuarios tengan permisos de escritura en el 
+    ;     writ list = root, @lpadmin
+    ;[homes]
+    ;     comment = Home Direcotries
+    ;     browseable = yes
+    ;     writable = yes
+    ;     valid users = %s
+    ;     create mask = 0664
+    ;     directory mask = 0775
+    [publico]
+          comment = publico
+          path = /srv/samba/publico  # esto hace referencia al la carpeta antes creada
+          browseable = yes              # Directorio navegable - YES
+          printable = no                # No es una impresora
+          guests ok = yes               # cualquier usuario puede acceder 
+          read only = no                # se puede escribir 
+          create mask = 0700            # permisos de los archivos que se creen aquí 
+          directory mask = 0777         # permisos de los directorios que se creen aquí
+          writeable = yes               # se puede escribir en el 
+    [administracion]
+          comment = solo para administracion 
+          path = /srv/samba/administracion
+          browseabe = yes 
+          read only = no
+          writeable = yes 
+          create mask = 0664
+          directory mask = 0775
+          vaid users = usuario10        # Que usuarios pueden entrar
+    [homes]
+          comment = Home Directory 
+          browseable = no 
+          writeable = yes 
+          valid users = %S              # Todos los usuarios son vaidos 
+          create mask = 0664
+          directory mask = 0775
+    [printers]
+          comment = All printers
+          path = /var/spool/samba
+          browseable = no               #Obviamente una impresora no tiene sis. archivos
+          guests ok = yes 
+          writeable = no                #Obviamente no puede escribir en una impresora
+          printable = yes               #es una impresora
+    [SAMBA]
+          comment = samba
+          path = /home/SAMBA
+          valid users = usuario10, ceo1, tecnico #los usuarios están separados por coma y        browseable = yes                       #espacio
+          writeable = yes
+          create mask = 0664
+          directory mask = 0775
+    [compartido]
+    #Esto es una carpeta compartida 
+          comment = compartido 
+          path = /compartido 
+          writeable = yes 
+          browseable = yes
+          guests ok = yes
+    [RED]
+    # igual que carpeta compartida pero con otro nombre
+          comment = RED
+          path = /RED
+          writeable = yes 
+          browseable = yes
+          guests ok = yes
+    ```
+
+    - **standalone server** - El server gestiona sus propios recursos compartidos y su propia base de datos de usuarios local (creado por smbpasswd)
+
+    - **Domain controller** - Server encargado de centralizar todas las cuentas de usuario, contraseñas y politicas de seguridad
+
+      - *Active directory* - Samba se comporta como un windows server con active direcotry. Incluye un servidor Kerberos y DNS integrado. El usuario se crea en el Samba pero puede iniciar sesión desde cualquier máquina de la red.
+
+      - *Classic primary domain controller* - Modelo antiguo estilo windows NT 4.0
+
+    - **Domain member** - Se usa cuando ya hay un controlador de dominio en la misma red. El domain member añade un server de archivos extra que depende del domain controller. Cuando un usuario se conecta al domain member, este le pregunta al domain controller si el usuario y contraseñas son correctas.
+
+**Sticky bit en samba** - Los permisos sobre ficheros y directorios en samba tienen 4 bits en vez de 3 como en Linux. El primer bit es el sticky bit, puede ser 0 o 1. 0 significa que no está activo y 1 que si está activo. El sticky bit activo impide que otro usuarios que no sean el creador o el root puedan cambiar el nombre o eliminar un archivo o directorio. Imaginemos que el sticky bit de la carpeta comparida estuviera activado, y un usuario A crease un archivo en la misma. El usuario B no puede cambiar el nombre del archivo, ni eliminarlo de esa carpeta.
+
+**Writeable y read only** - Son sinonmos inversos, hacen exactamente lo mismo, writeable = yes hace que puedas escribir, read only = yes hace que no puedas escribir. El parametro write list tiene prioridad ante writeable y read only. Si incluyes un usuario en write list, este se pude saltar los permisos de escritura del directorio.
+
+**browseable** - determina si ese recursos aparece disponible cuando un usuario explora el servidor. Si ponemos browseable = no, el recurso está oculto para el usuario. Por ejemplo, en home directories es browseable = no, para que un usuario no pueda ver las carpetas personales de todos los demás usuarios. Mucho cuidado con Browseable = no. Si se deja así un directorio general, el usuario no podrá verlo
+
+7.  creación de usuarios y contraseñas SAMBA
+
+    ```{bash}
+    $ sudo smbpasswd -a usuario10       #Crea la contraseña
+    $ sudo smbpasswd -e usuario10       #enable, habilita la contraseña
+    $ sudo smbpasswd -d usuario10       #disable, inhabilita la contraseña
+    $ sudo smbpasswd -x usuario10       # Eliminar usuario y contraseña
+    ```
+
+8.  Aplicar los cambios
+
+    Hay varios modos,
+
+    - Apagar y encender la máquina
+
+    - Reiniciar la máquina
+
+    - **Reiniciar los servicios**
+
+      ```{bash}
+      $ sudo service nmbd restart 
+      $ sudo service smbd restart 
+      $ sudo systemctl restart smbd.service
+      $ sudo systemctl restart nmbd.service
+      $ sudo systemctl status smbd.service 
+      $ sudo systemctl status nmbd.service 
+      ```
+
+### Como hacer que el usuario vaya a su home en samba
+
+Al cambiar el archivo de configuración, en shared definitions hay que descomentar el Homes que viene por defecto en debian o ubuntu
+
+```         
+[homes]
+  comment = Home Directories 
+  browseable = yes #Este hay que cambialo, cuidado 
+  read only = no   # este también hay que cambiarlo
+  create mask = 0644
+  directory mask = 0755 
+  valid users = %S # esto significa todos los usuarios samba válidos 
+```
+
+No se pone ningun path y el sistema irá al home directo
+
+### Servidor Samba en Arch (Endavour OS)
+
+1.  Actualizar el sistema
+
+    ```{bash}
+    $ sudo pacman -Syy && sudo pacman -Syu
+    ```
+
+2.  Instalar Samba
+
+    ```{bash}
+    $ sudo pacman -S samba smbclient
+    ```
+
+3.  comprobar que estén activos los demonios y despertaros
+
+    ```{bash}
+    $ sudo systemctl status smb 
+    $ sudo systemctl status nmb
+    #Dará disabled tras instalar samba, hay que activarlos 
+    $ sudo systemctl start smb nmb  #Activar servicios de forma permanente
+    $ sudo systemctl enable --now smb nmb #activarlos de forma permanente
+    ```
+
+4.  Crear usuarios y contraseñas
+
+    ```{bash}
+    $ sudo useradd - m -s /bin/bash usuario
+    $ usuario passwd
+    ```
+
+5.  Crear los directorios con mkdir y darles permisos con chmod 777
+
+6.  Crear el archivo smb.conf
+
+    Por defecto arch no crea archivos de configuración. Un archivo smb.conf de Debian funciona perfectametne. También puedes copiarlo en un USB
+
+7.  Crear los usuarios y contraseñas samba
+
+    ```{bash}
+    $ smbpasswd -a usuario    #Añadir (-a Add) la contraseña samba
+    $ smbpasswd -e usuario    #Permitir (-e Enable) la contraseña samba
+    ```
+
+8.  Reiniciar servicios y comprobar el status después
+
+    ```{bash}
+    $ sudo systemctl restart smb nmb
+    $ sudo systemctl status smb nmb
+    ```
+
+9.  Permitir Samba en el firewall
+
+    Por defecto arch tiene todo cerrado, hay que abrir los servicios nencesarios
+
+    ```{bash}
+    $ sudo firewall-cmd --list-all    #Mirar si en servicios está samba
+    $ sudo firewall-cmd --add-service=samba --permanent #Permitir samba en el firewall
+    $ sudo firewall-cmd --reload                        # Reiniciar el firewall
+    ```
+
+### Controlador de Dominio con directorio activo (DC) en Ubuntu server
+
+Los directorios activos en samba dependen mucho de los DNS hay que echar un vistazo a /etc/hosts. Aparecerá algo como:
+
+```{bash}
+127.0.0.1     localhost
+192.168.1.40  servidor.miempresa.local   #Esta es la ip estática del server
+```
+
+Toma nota de todo ello. Después se puede comenzar
+
+Antes de empezar hay que instalar Kerberos para la seguridad y otras cosas
+
+```{bash}
+$ sudo apt-get install krb5-user winbind libpam-winbind libnss-winbind
+```
+
+Kerberos te pedirá el realm, hay que poner: MIEMPRESA.LOCAL
+
+1.  Detener los servicios samba
+
+    ```{bash}
+    $ sudo systemctl stop samba-ad-dc smbd winbind
+    $ sudo systemctl disable samba-ad-dc smbd winbind
+    ```
+
+2.  Hacer copia de seguridad del archivo smb.conf
+
+3.  hacer le provisionamiento
+
+    ```{bash}
+    $ sudo samba-tool domain provision --use-rfc2307 --interactive
+    ```
+
+    Esto pedirá varias cosas
+
+    - Real: **MIEMPRESA.LOCAL** (Muy importante, en mayúsculas)
+
+    - Domain: **MIEMPRESA**
+
+    - server role: **dc**
+
+    - DNS backend: **SAMBA_INTERNAL**
+
+    - DNS forwarder: **8.8.8.8,8.8.4.4** (También se puede usar la ip del router)
+
+    - Administrator password: elige una contraseña
+
+4.  Configurar Kerberos
+
+    Samba genera un archivo de configuración para Kerberos. Hay que reemplzar el que viene por defecto
+
+    ```{bash}
+    $ sudo cp /var/lib/samba/private/krb5.conf /etc/krb5
+    ```
+
+5.  Activar el Active directory
+
+    ```{bash}
+    $ sudo systemctl unmask samba-ad-dc
+    $ sudo systemctl start samba-ad-dc
+    $ sudo systemctl enable samba-ad-dc
+    ```
+
+6.  Configurar el DNS local editando el archivo /etc/resolv.conf
+
+    ```         
+    ```
+
+7.  Verificar que todo funciona
+
+    1.  verificar los DNS de active directory
+
+        ```{bash}
+        $ host -t SRV _ldap._tcp.miempresa.local
+        $ host -t SRV _kerberos._udp.miempresa.local
+        #Esto debe dar una respuesta apuntando al server
+        ```
+
+    2.  Probar Kerberos
+
+        ```{bash}
+        $ kinit administrator@MIEMPRESA.LOCAL
+        # Esto pide contraseña de administrador 
+        #Después ver el ticket de kerberos generado 
+        $ klist
+        ```
+
+    3.  Crear un usuario
+
+        ```{bash}
+        $ sudo samba-tool user create pepe      # para crearlo en linux
+        ```
+
+Los equipos con windows Home o single Language no permiten unirse a un dominio, se necesitan obligatoriamente versiones de windows XP professional o windows 10 pro/enterprise
+
+Primero hay que ir a propiedades del sistema
+
+```{bash}
+sysdem.cpl
+```
+
+Después hay que añadir el grupo por dominio. En la sección de "Miembro de" hay que marcar dominio y escribir la configuración completa de Samba (miempresa.local)
+
+Después hay que autenticarse como administrador (la del administrador samba) y finalmente reiniciar el equipo. Si todo fue bien debe aparecer:
+
+```{bash}
+Bienvenido al dominio miempresa.local
+```
+
+En la pantalla de bloqueo selecciona otro usuario e intenta iniciar sesión con un usuario creado en samba
+
+En XP hay que ir primero a propiedades del sistema y modificar el nombre de red (Nombre de equipo- Cambiar). Allí hay que seleccionar la opcioón de dominio y escribir MIEMPRESA.LOCAL (en mayúsculas). Después se debe validar el administrador de samba y finalmente reiniciar el sistema.
+
+Cuando cargue la pantalla de sesión de XP hay que presionar Ctrl + Alt + Supr. Aparecerá una opción desplegable que dice **conectarse a:** Hay que seleccionar el dominio adecuado (MIEMPRESA) en vez del que está por defecto ("Este equipo") . Después hay que logearse con un usuario samba.
+
+## FIREWALL
+
+**CONCEPTO CLAVE - PROTOCOLO + PUERTO + DIRECCIÓN IP**
+
+Se puede bloquear por cualquiera de esas opciones o cualquier combinación de las mismas, así como por las 3 a la vez.
+
+1.  Ver s el firewall está activo
+
+    ```{bash}
+    $ sudo service ufw status
+    $ sudo ufw status             #hace lo mismo pero da menos informacion
+    $ sudo ufw start              #Levantar el firewall de forma temporal
+    $ sudo ufw enable             #Levantar el firewall de forma permanente
+    ```
+
+2.  Permitir protocolos y puertos
+
+    ```{bash}
+    $ sudo ufw allow http https     #Permitir los protocolos http y https
+    $ sudo ufw allow 80             #Permitir el puerto 80
+    $ sudo ufw allow 20:21/tcp      #Permite la comunicación tcp en un rango de puertos 
+    $ sudo ufw allow 20:21/udp      #Permite la comunicación udp en un rango de puertos 
+    $ sudo ufw allow ssh            #Permitir protocolo ssh
+    $ sudo ufw allow telnet         #Permitir protocolo telnet
+    $ sudo ufw allow ftp            #Permitir protocolo ftp
+    $ sudo allow in on enp0s3 to any port 80 #Permitir a la tarjeta de red cualquier                                                 petición al purto 80
+    $ sudo ufw default allow incoming #Permitir todo el tráfico entrante
+    $ sudo ufw default allow outgoing #Permitir todo el tráfico saliente
+    ```
+
+3.  Denegar protocolos y puertos
+
+    ```{bash}
+    $ sudo ufw deny ssh             #Denegar entrada por protocolo ssh
+    $ sudo ufw deny 80              #Denegar entrada por puerto 80
+    $ sudo ufw default deny incoming #Denegar todo el tráfico entrante
+    $ sudo ufw default deny outgoing #Denegar todo el tráfico saliente
+    ```
+
+4.  Permitir y denegar por IP
+
+    ```{bash}
+    $ sudo ufw deny from 192.168.1.35     #Denegar entrada desde esta IP
+    $ sudo ufw allow from 192.168.1.35 to any port 69 proto tcp 
+    $ sudo ufw allow from 192.168.1.35 to any port 69 proto udp
+    #Permitir una IP en un purto concreto (VPN)
+    $ sudo allow from 192.168.1.0/24       #Permite toda una red clase C
+    $ sudo allow from 172.26.0.0/16        #Permite toda una red clase B
+    $ sudo allow from 10.0.0.0/8           #Permite toda una red clase A 
+    ```
+
+5.  Ver reglas del firewall numeradas y cambiarlas
+
+    ```{bash}
+    $ sudo ufw status numbered        #muestra todas las reglas del firewall por orden de                                     creacion
+    $ sudo ufw delete 23              #eliminar la regla numero 23 del firewall
+    $ sudo ufw delete allow http      #eliminar todas las reglas que permitan http
+    $ sudo ufw reset                  #Resetear el firewall al estado de fábrica
+    ```
+
+### Firewall en arch linux
+
+Arch linux no trae ufw de serie sino que tiene firewalld aunque se puede instalar ufw
+
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Que hace                                             | DEBIAN 12                                       | Arch (Endavour OS)                                                                                                 |
++======================================================+=================================================+====================================================================================================================+
+| mirar status de servicios                            | service -- status-all                           | systemct list-units --type=service --all (Todos los servicios)                                                     |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      |                                                 | systemctl list-units --type=service (solo servicios corriendo)                                                     |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| status del firewall                                  | service ufw status                              | systemctl status firewalld                                                                                         |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| desactivar o parar el firewall                       | ufw disable                                     | systemctl stop firewalld                                                                                           |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      | ufw stop                                        |                                                                                                                    |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Iniciar el firewall                                  | ufw enable                                      | systemctl start firewalld                                                                                          |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| permitir el protocolo http                           | ufw allow http                                  | firewall-cmd --add-service=http --permanent                                                                        |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| denegar protocolo http                               | ufw deny http                                   | firewall-cmd --remove-service=http --permanent                                                                     |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| permitir puertos                                     | ufw allow 80                                    | firewall-cmd --add-port=80/tcp --permanent                                                                         |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      |                                                 | firewall-cmd --add-port=80/udp --permanent                                                                         |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      |                                                 | firewall-cmd --reload (recargar servicio)                                                                          |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Denegar puertos                                      | ufw deny 80                                     | firewall-cmd --remove-port=80/tcp --permanent                                                                      |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      |                                                 | firewall-cmd --remove-port=80/udp --permanent                                                                      |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      |                                                 | firewall-cmd --reload                                                                                              |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| ver la información de una aplicación al firewall     | ufw app info 'OpenSSH'                          | firewall-cmd --info-service=ssh                                                                                    |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      | ufw app info 'Samba'                            | firewall-cmd --info-service=samba                                                                                  |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Ver lista de aplicaciones disponibles                | ufw app list                                    | firewall-cmd –get-services                                                                                         |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Dónde se guardan las reglas del firewall por defecto | /etc/ufw/before.rules                           | /etc/lib/firewalld/zones                                                                                           |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      |                                                 | /etc/lib/firewalld/services                                                                                        |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Permitir/denegar todo un segmento de red             | ufw allow from 192.168.1.0/24                   | firewall-cmd --permanent --zone=public –-add-rich-rule='rule family="ipv4" source address="192.168.1.0/24" accept' |
+|                                                      |                                                 |                                                                                                                    |
+|                                                      | ufw deny from 192.168.1.0/24                    | firewall-cmd --permanent --zone=public –-add-rich-rule='rule family="ipv4" source address="192.168.1.0/24" reject' |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Sacar el servidor de la red                          | iptables -I INPUT -p icmp --icmp-type 8 -j DROP | iptables -I INPUT -p icmp --icmp-type 8 -j DROP                                                                    |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| vers estado de las iptables                          | iptables -L -n -v                               | iptables -L -n -v                                                                                                  |
++------------------------------------------------------+-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+
+: Firewall en Debian Vs Arch linux
+
+## CONTROL REMOTO DEL SERVIDOR
+
+1.  Instalar los paquetes necesarios. Se puede usar cockpit o webmin, hacen basicamente lo mismo, con ligeras diferencias, basicamente estéticas
+
+    ```{bash}
+    $ sudo apt-get install cockpit cockpit-networkmanager
+    ```
+
+    cockpit-networkmanager es un paquete auxiliar de cockpit que permite gestionar redes. Muy útil. Hay otros paquetes igual de interesantes
+
+2.  Ver si el firewall está activado y si lo está permitir el puerto 9090 (TCP)
+
+3.  Abrir un navegador y escribir
+
+    ```{web}
+    https:\\192.168.1.209:9090
+    ```
+
+Para Webmin
+
+1.  Descargar webmin (webmin-2.641.deb)
+
+2.  Instalarlo con gdebi
+
+3.  Verificar si el firewall está activo y si lo está permitir el puerto 10000
+
+4.  Abir un navegador y escribir
+
+    ```{web}
+    hhtps:\\192.168.1.209:10000
+    ```
+
+## SERVICIOS Y PROCESOS EN LINUX
+
+Ver todos los servicios
+
+```{bash}
+$ sudo service --status-all
+$ sudo systemctl list-units --type=service --all #hace lo mismo 
+```
+
+Aparecen todos los servicios con
+
+\[+\] - Servicio activo
+
+\[-\] - Servicio no activo
+
+Hay dos modos de ver los servicios:
+
+- **SystemV**- Modo clásico de Unix
+
+- **Systemd** - Modo moderno
+
++---------------------------------------------+-----------------------+----------------------------------+
+| Que hace?                                   | SystemV (debian/unix) | Systemd (arch/red hat)           |
++=============================================+=======================+==================================+
+| iniciar servicio                            | service ssh start     | systemctl start ssh.service      |
++---------------------------------------------+-----------------------+----------------------------------+
+| Parar el servicio                           | service ssh stop      | systemctl stop ssh.service       |
++---------------------------------------------+-----------------------+----------------------------------+
+| Reiniciar el servicio                       | service ssh restart   | systemctl restart ssh.service    |
++---------------------------------------------+-----------------------+----------------------------------+
+| estado del servicio                         | service ssh status    | systemctl status ssh.service     |
++---------------------------------------------+-----------------------+----------------------------------+
+| habiitar de arranque el servicio            | chkconfig ssh on      | systemctl enable ssh.service     |
++---------------------------------------------+-----------------------+----------------------------------+
+| deshabilitar el servicio desde arranque     | chkconfig ssh off     | systemctl disable ssh.service    |
++---------------------------------------------+-----------------------+----------------------------------+
+| ver que servicios están activos de arranque | chkconfig –-list ssh  | systemctl is-enabled ssh.service |
++---------------------------------------------+-----------------------+----------------------------------+
+
+: SystemV vs Systemd
+
+### Script para servicios
+
+crear un script solicitando por pantalla un servicio. La opción 1 dará el status del servicio, la opción 2 lo desactiva, la opción 3 lo activa y la 4 hace un informe del servicio.
+
+```{bash}
+#!/usr/bin/bash
+#author: nacho
+#date: 10.06.2026
+#version: 1.0
+#This script asks for a service to be introduced via terminal
+# and allows a serie of options
+read -p "introduce a service:" ser
+sleep 2
+echo "select the action for the service $ser"
+PS3="Option:"
+select i in status deactivate activate inform exiting
+do case $i in
+        status)
+        echo "Checking the service $ser status..."
+        systemctl status $ser ;;
+        deactivate)
+        echo "Deactivating the service $ser..."
+        systemctl stop $ser;;
+        activate)
+        echo "Activating service $ser..."
+        systemctl restart $ser;;
+        inform)
+        echo "Generating an inform. Saved as inform_$ser.txt"
+        systemctl status $ser > inform_$ser.txt;;
+        exiting)
+        exit 0;;
+esac
+done
+```
+
+### Servicios en windows XP
+
+```{bash}
+taksmer     #Procesos activos 
+taskkill /numero_proceso/f    # Matar/parar el proceso 
+```
+
+### Procesos en Linux
+
+```{bash}
+$ top         # Muestra en tiempo real los procesos
+$ htop        # Muestra en tiempo real los procesos 
+$ w           # ver quién está conectado a mi 
+$ ps -aux     # quién hizo que y cuando 
+$ kill -9 3728 # eliminar el proceso 3728 
+# Si aparece un & en el proceso, siginia que está en segundo plano
+```

